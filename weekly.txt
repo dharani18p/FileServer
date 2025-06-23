@@ -1,0 +1,2017 @@
+Given a non-empty array of integers nums, every element appears twice except for one. Find that single one.
+
+import java.util.Scanner;
+
+public class Solution {
+    public int singleNumber(int[] nums) {
+        int res = 0;
+        for(int i = 0; i < nums.length; i++)
+        {
+            res = res ^ nums[i];
+        }
+        return res;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+      //  System.out.println("Enter the numbers separated by spaces:");
+        String input = scanner.nextLine(); // Get input as a single line
+        String[] inputArray = input.split(" "); // Split the input string by spaces
+
+        int[] nums = new int[inputArray.length];
+        for (int i = 0; i < inputArray.length; i++) {
+            nums[i] = Integer.parseInt(inputArray[i]); // Convert each value to an integer
+        }
+
+        Solution solution = new Solution();
+        int result = solution.singleNumber(nums);
+
+        System.out.println(result);
+    }
+}
+##
+Given two integers dividend and divisor, divide two integers without using multiplication, division, and mod operator.
+
+import java.util.Scanner;
+
+public class Solution {
+    public int divide(int dividend, int divisor) {
+        int res = 0;
+        int abs = 1;
+        if(dividend < 0)
+        {
+            dividend *= -1;
+            abs *= -1;
+        }
+        if(divisor < 0)
+        {
+            divisor *= -1;
+            abs *= -1;
+        }
+        while(dividend >= divisor)
+        {
+            dividend -= divisor;
+            res++;
+        }
+        return res * abs;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        //System.out.println("Enter the dividend:");
+        int dividend = scanner.nextInt();
+
+        //System.out.println("Enter the divisor:");
+        int divisor = scanner.nextInt();
+
+        Solution solution = new Solution();
+        int result = solution.divide(dividend, divisor);
+
+        System.out.println(result);
+    }
+}
+##
+Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.
+
+import java.util.Scanner;
+
+public class Solution {
+    public int trap(int[] height) {
+       int [] left = new int[height.length];
+       int [] right = new int[height.length];
+       int max = 0, i;
+       for(i = 0; i < height.length; i++)
+       {
+           if(height[i] > max)  max = height[i];
+           left[i] = max;
+       }
+       for(i = height.length - 1, max = 0; i >= 0; i--)
+       {
+           if(height[i] > max)  max = height[i];
+           right[i] = max;
+       }
+       int tot = 0;
+       for(i = 0; i < height.length; i++)
+       {
+           tot += Math.min(left[i], right[i]) - height[i];
+       }
+       return tot;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        //System.out.println("Enter the heights separated by spaces:");
+        String userInput = scanner.nextLine();
+
+        String[] heightStrings = userInput.split(" ");
+        int[] height = new int[heightStrings.length];
+
+        for (int i = 0; i < heightStrings.length; i++) {
+            height[i] = Integer.parseInt(heightStrings[i]);
+        }
+
+        Solution solution = new Solution();
+        int waterTrapped = solution.trap(height);
+
+        System.out.println(waterTrapped);
+    }
+}
+##
+Given an array nums of size n, return the majority element.
+
+
+import java.util.*;
+
+class Solution {
+    public int majorityElement(int[] nums) {
+        
+    Arrays.sort(nums);
+    return nums[nums.length / 2];
+        
+        
+        
+    }
+}
+public class minelement
+{
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // Read the size of the array
+        //System.out.print("Enter the number of elements: ");
+        int n = scanner.nextInt();
+        
+        // Initialize the array
+        int[] nums = new int[n];
+        
+        // Read the elements of the array
+        //System.out.println("Enter the elements:");
+        for (int i = 0; i < n; i++) {
+            nums[i] = scanner.nextInt();
+        }
+        
+        // Create an instance of Solution and find the majority element
+        Solution solution = new Solution();
+        int majority = solution.majorityElement(nums);
+        
+        // Print the result
+        System.out.println("The majority element is: " + majority);
+        
+        // Close the scanner
+        scanner.close();
+    }
+}
+##
+Given an integer n, return the count of all numbers with unique digits, x, where 0 <= x < 10n.
+
+
+import java.util.Scanner;
+
+class Solution {
+    public int countNumbersWithUniqueDigits(int n) {
+    if(n == 0)  return 1;
+    if(n == 1)  return 10;
+    int unique = 9, available = 9;
+    int tot = 10;
+    while(n > 1)
+    {
+        unique = unique * available;
+        tot += unique;
+        available--;
+        n--;
+    }
+    return tot;
+    }
+}
+public class Main
+{
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);  // Create a Scanner object to get user input
+        Solution solution = new Solution();
+      //  System.out.print("Enter a value for n: ");
+        int n = sc.nextInt();  // Read input value for n
+        // Output the result
+        System.out.println("Count of numbers with unique digits for n = " + n + ": " + solution.countNumbersWithUniqueDigits(n));
+        sc.close();  // Close the scanner
+    }
+}
+
+##
+Suppose an array of length n sorted in ascending order is rotated between 1 and n times. For example, the array nums = [0,1,4,4,5,6,7] might become:
+
+import java.util.Scanner;
+
+class Solution {
+    public int findMin(int[] nums) {
+       int low = 0;
+       int high = nums.length - 1;
+       int ans = Integer.MAX_VALUE;
+       while(low <= high)
+       {
+           int mid = (low + high) / 2;
+           
+           if(nums[mid] == nums[low] && nums[mid] == nums[high])
+           {
+               low++;
+               high--;
+               continue;
+           }
+           
+           if(nums[low] < nums[mid])
+           {
+               ans = Math.min(ans, nums[low]);
+               low = mid + 1;
+           }
+           else
+           {
+               ans = Math.min(ans, nums[mid]);
+               high = mid - 1;
+           }
+       }
+       return ans;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Input the size of the array
+       // System.out.println("Enter the size of the array:");
+        int n = scanner.nextInt();
+
+        // Input the elements of the array
+        int[] nums = new int[n];
+       // System.out.println("Enter the elements of the array:");
+        for (int i = 0; i < n; i++) {
+            nums[i] = scanner.nextInt();
+        }
+
+        // Create an instance of Solution and find the minimum element
+        Solution solution = new Solution();
+        int result = solution.findMin(nums);
+
+        // Print the result
+        System.out.println("The minimum element in the rotated array is: " + result);
+        
+        scanner.close();
+    }
+}
+##
+A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Alphanumeric characters include letters and numbers.
+import java.util.Scanner;
+
+public class PalindromeChecker {
+    
+    public static boolean isPalindrome(String s) {
+        int i = 0, j = s.length() - 1;
+        while (i < j) {
+            if (!Character.isLetterOrDigit(s.charAt(i))) {
+                ++i;
+            } else if (!Character.isLetterOrDigit(s.charAt(j))) {
+                --j;
+            } else if (Character.toLowerCase(s.charAt(i)) != Character.toLowerCase(s.charAt(j))) {
+                return false;
+            } else {
+                ++i;
+                --j;
+            }
+        }
+        return true;
+    }
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in); // Create a Scanner object for input
+
+        //System.out.println("Enter a string to check if it's a palindrome:");
+        String input = scanner.nextLine(); // Read user input
+
+        // Check if the input string is a palindrome and print true or false
+        System.out.println(isPalindrome(input)); // Output will be true or false
+
+        scanner.close(); // Close the scanner
+    }
+}
+##
+Implement pow(x, n), which calculates x raised to the power n (i.e., xn).
+
+
+import java.util.Scanner;
+
+public class Solution {
+    
+    public double pow(double x, int n)
+    {
+        if(n == 1)  return x;
+        return x * pow(x, n - 1);
+    }
+    
+    public double myPow(double x, int n) {
+       if(n == 0)   return 1;
+       if(n == 1)   return x;
+       if(n < 0)
+       {
+           n = -n;
+           x = 1/x;
+       }
+       return pow(x, n);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in); // Create a Scanner object for input
+
+
+        double x = scanner.nextDouble(); // Read the base
+
+        
+        int n = scanner.nextInt(); // Read the exponent
+
+        Solution solution = new Solution();
+        double result = solution.myPow(x, n); // Calculate x^n
+
+        System.out.printf("%.5f\n", result); // Print the result formatted to 5 decimal places
+
+        scanner.close(); // Close the scanner
+    }
+}
+
+##
+Given a string n representing an integer, return the closest integer (not including itself), which is a palindrome. If there is a tie, return the smaller one.
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class Solution {
+    public String nearestPalindromic(String numberStr) {
+    long number=Long.parseLong(numberStr);
+    if(number<=10)return String.valueOf(number-1);
+    if(number==11)return "9";
+    int length=numberStr.length();
+    long lefthalf=Long.parseLong(numberStr.substring(0,(length+1)/2));
+    long[] palindromecandidate=new long[5];
+    palindromecandidate[0]=generatepalindromefromleft(lefthalf-1,length%2==0);
+    palindromecandidate[1]=generatepalindromefromleft(lefthalf,length%2==0);
+    palindromecandidate[2]=generatepalindromefromleft(lefthalf+1,length%2==0);
+    palindromecandidate[3]=(long)Math.pow(10,length-1)-1;
+    palindromecandidate[4]=(long)Math.pow(10,length)+1;
+    long nearestpalindrome=0;
+    long mindifference=Long.MAX_VALUE;
+    for(long candidate:palindromecandidate){
+        if(candidate==number)continue;
+        long difference=Math.abs(candidate-number);
+        if(difference<mindifference || (difference==mindifference  && candidate<nearestpalindrome)){
+            mindifference=difference;
+            nearestpalindrome=candidate;
+        }
+        
+    }
+    return String.valueOf(nearestpalindrome);
+    //Type Code Here
+    
+    }
+    private long generatepalindromefromleft(long lefthalf,boolean isevenlength){
+        long palindrome=lefthalf;
+        if(!isevenlength)lefthalf/=10;
+        while(lefthalf>0){
+            palindrome=palindrome*10+lefthalf%10;
+            lefthalf/=10;
+        }
+        return palindrome;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        String input = scanner.nextLine();
+
+        Solution solution = new Solution();
+        String result = solution.nearestPalindromic(input);
+        System.out.println(result);
+        
+        scanner.close();
+    }
+}
+##
+Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+
+import java.util.Scanner;
+import java.util.Stack;
+
+public class Solution {
+    public boolean isValid(String s) {
+        //Type Code Here..............
+        Stack<Character>stack=new Stack<>();
+        for(char c:s.toCharArray()){
+            if(c=='(' || c=='{' || c=='['){
+            stack.push(c);
+            }
+            else{
+                if(stack.isEmpty()){
+                    return false;
+                }
+                char top=stack.pop();
+                if((c==')' && top!='(') ||
+                (c=='}' && top!='{')||
+                (c==']' && top!='[')){
+                    return false;
+                }
+            }
+        }
+        return stack.isEmpty();
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        //System.out.println("Enter a string of brackets:");
+        String input = scanner.nextLine();
+
+        Solution solution = new Solution();
+        boolean result = solution.isValid(input);
+
+        if (result) {
+            System.out.println("true");
+        } else {
+            System.out.println("false");
+        }
+
+        scanner.close();
+    }
+}
+##
+Given an array of integers nums sorted in non-decreasing order, find the starting and ending position of a given target value.
+
+import java.util.Scanner;
+import java.util.Stack;
+public class Solution {
+     public boolean isValid(String s){
+         Stack<Character>stack=new Stack<>();
+         for(char c:s.toCharArray()){
+             if(c=='(' || c=='{' ||c=='['){
+                 stack.push(c);
+             }
+             else{
+                 if(stack.isEmpty()){
+                     return false;
+                 }
+                 char top=stack.pop();
+                 if((c==')' && top!='(')||
+                 (c=='}' && top!='{')||
+                 (c==']' && top!='[')){
+                     return false;
+                 }
+             }
+         }
+         return stack.isEmpty();
+     }
+    public int[] searchRange(int[] nums, int target) {
+        //Type Code Here............
+        int first=findBound(nums,target,true);
+        int last=findBound(nums,target,false);
+        return new int[]{first,last};
+    }
+    private int findBound(int[] nums,int target,boolean isFirst){
+        int left=0,right=nums.length-1;
+        int bound=-1;
+        while(left<=right){
+            int mid=left+(right-left)/2;
+            if(nums[mid]==target){
+                bound=mid;
+                if(isFirst){
+                    right=mid-1;
+                }
+                else{
+                    left=mid+1;
+                    
+                }
+            }
+            else if(nums[mid]<target){
+                left=mid+1;
+            }
+            else{
+                right=mid-1;
+            }
+        }
+        return bound;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // Read the size of the array
+        //System.out.print("Enter the number of elements in the array: ");
+        int n = scanner.nextInt();
+        
+        // Read the elements of the array
+        int[] nums = new int[n];
+        //System.out.println("Enter the elements of the array (sorted in non-decreasing order):");
+        for (int i = 0; i < n; i++) {
+            nums[i] = scanner.nextInt();
+        }
+        
+        // Read the target value
+        //System.out.print("Enter the target value: ");
+        int target = scanner.nextInt();
+        
+        // Create an instance of Solution and find the range
+        Solution solution = new Solution();
+        int[] result = solution.searchRange(nums, target);
+        
+        // Print the result
+        System.out.println("[" + result[0] + "," + result[1] + "]");
+        
+        scanner.close();
+    }
+}
+##
+Given an array of integers heights representing the histogram's bar height where the width of each bar is 1, return the area of the largest rectangle in the histogram.
+
+import java.util.Scanner;
+import java.util.Stack;
+public class Solution {
+    public int largestRectangleArea(int[] heights) {
+       //Type Code Here......
+       int n=heights.length;
+       Stack<Integer>stack=new Stack<>();
+       int maxArea=0;
+       for(int i=0;i<=n;i++){
+           int h=(i==n)?0:heights[i];
+           while(!stack.isEmpty() && h<heights[stack.peek()]){
+               int height=heights[stack.pop()];
+               int width=stack.isEmpty()?i:i-stack.peek()-1;
+               maxArea=Math.max(maxArea,height*width);
+           }
+           stack.push(i);
+       }
+       return maxArea;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        int n = scanner.nextInt();
+        
+        // Read the heights
+        int[] heights = new int[n];
+        
+        for (int i = 0; i < n; i++) {
+            heights[i] = scanner.nextInt();
+        }
+        
+        // Create an instance of Solution and find the largest rectangle area
+        Solution solution = new Solution();
+        int maxArea = solution.largestRectangleArea(heights);
+        
+        // Print the result
+        System.out.println(maxArea);
+        
+        scanner.close();
+    }
+}
+##
+Given an array arr of positive integers sorted in a strictly increasing order, and an integer k.
+
+import java.util.Scanner;
+
+public class Solution {
+    public int findKthPositive(int[] arr, int k) {
+        int left = 0, right = arr.length - 1;
+        
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            int missing = arr[mid] - (mid + 1);
+            
+            if (missing < k) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        
+        return left + k;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+       
+        int n = scanner.nextInt();
+        
+        int[] arr = new int[n];
+        
+        for (int i = 0; i < n; i++) {
+            arr[i] = scanner.nextInt();
+        }
+        
+        
+        int k = scanner.nextInt();
+        
+       
+        Solution solution = new Solution();
+        int result = solution.findKthPositive(arr, k);
+        System.out.println("The " + k + "th missing number is: " + result);
+        
+        scanner.close();
+    }
+}
+##
+Given a string s of '(' , ')' and lowercase English characters.
+
+import java.util.*;
+
+public class Solution {
+    public String minRemoveToMakeValid(String s) {
+        StringBuilder sb = new StringBuilder(s);
+        Stack<Integer> stack = new Stack<>();
+        
+        
+        for (int i = 0; i < sb.length(); i++) {
+            char c = sb.charAt(i);
+            if (c == '(') {
+                stack.push(i);
+            } else if (c == ')') {
+                if (!stack.isEmpty()) {
+                    stack.pop(); 
+                } else {
+                    sb.setCharAt(i, '*'); 
+                }
+            }
+        }
+        
+        
+        while (!stack.isEmpty()) {
+            sb.setCharAt(stack.pop(), '*'); 
+        }
+        
+        
+        return sb.toString().replaceAll("\\*", "");
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        String s = scanner.nextLine();
+
+        Solution solution = new Solution();
+        String result = solution.minRemoveToMakeValid(s);
+        System.out.println( result);
+
+        scanner.close();
+    }
+}
+
+##
+Given a string s representing a valid expression, implement a basic calculator to evaluate it, and return the result of the evaluation.
+
+import java.util.*;
+
+public class Solution {
+    public int calculate(String s) {
+        Stack<Integer> stack = new Stack<>();
+        int result = 0, number = 0, sign = 1;
+        
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            
+            if (Character.isDigit(c)) {
+                number = number * 10 + (c - '0'); 
+            } 
+            else if (c == '+') {
+                result += sign * number;
+                number = 0;
+                sign = 1;
+            } 
+            else if (c == '-') {
+                result += sign * number;
+                number = 0;
+                sign = -1;
+            } 
+            else if (c == '(') {
+                stack.push(result);
+                stack.push(sign);
+                result = 0;
+                sign = 1;
+            } 
+            else if (c == ')') {
+                result += sign * number;
+                number = 0;
+                result *= stack.pop(); 
+                result += stack.pop(); 
+            }
+        }
+        
+        result += sign * number; 
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        String s = scanner.nextLine();
+
+        Solution solution = new Solution();
+        int result = solution.calculate(s);
+        System.out.println(result);
+
+        scanner.close();
+    }
+}
+##
+Given an integer array nums sorted in non-decreasing order, return an array of the squares of each number sorted in non-decreasing order.
+
+import java.util.*;
+
+public class Solution {
+    public int[] sortedSquares(int[] nums) {
+        int n = nums.length;
+        int[] result = new int[n];
+        int l = 0, r = n - 1, index = n - 1;
+
+        while (l <= r) {
+            int leftSquare = nums[l] * nums[l];
+            int rightSquare = nums[r] * nums[r];
+
+            if (leftSquare > rightSquare) {
+                result[index] = leftSquare;
+                l++;
+            } else {
+                result[index] = rightSquare;
+                r--;
+            }
+            index--;
+        }
+
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        
+        int[] nums = new int[n];
+        
+        for (int i = 0; i < n; i++) {
+            nums[i] = scanner.nextInt();
+        }
+
+        Solution solution = new Solution();
+        int[] result = solution.sortedSquares(nums);
+        
+        System.out.println(Arrays.toString(result));
+        scanner.close();
+    }
+}
+
+##
+Given a string s, find the length of the longest  substring
+
+import java.util.*;
+
+public class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        Set<Character> set = new HashSet<>();
+        int maxLength = 0, l = 0;
+
+        for (int r = 0; r < s.length(); r++) {
+            while (set.contains(s.charAt(r))) {
+                set.remove(s.charAt(l));
+                l++;
+            }
+            set.add(s.charAt(r));
+            maxLength = Math.max(maxLength, r - l + 1);
+        }
+
+        return maxLength;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+       
+        String s = scanner.nextLine();
+
+        Solution solution = new Solution();
+        int result = solution.lengthOfLongestSubstring(s);
+
+        System.out.println(result);
+        scanner.close();
+    }
+}
+##
+You are given an array prices where prices[i] is the price of a given stock on the ith day.
+
+import java.util.*;
+
+public class Solution {
+    public int maxProfit(int[] prices) {
+        if (prices == null || prices.length == 0) return 0;
+
+        int buy1 = Integer.MAX_VALUE, buy2 = Integer.MAX_VALUE;
+        int sell1 = 0, sell2 = 0;
+
+        for (int price : prices) {
+            buy1 = Math.min(buy1, price);       
+            sell1 = Math.max(sell1, price - buy1);  
+            buy2 = Math.min(buy2, price - sell1);   
+            sell2 = Math.max(sell2, price - buy2);  
+        }
+
+        return sell2;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        int n = scanner.nextInt();
+
+        int[] prices = new int[n];
+        
+        for (int i = 0; i < n; i++) {
+            prices[i] = scanner.nextInt();
+        }
+
+        Solution solution = new Solution();
+        int result = solution.maxProfit(prices);
+
+        System.out.println(result);
+        scanner.close();
+    }
+}
+##
+You are climbing a staircase. It takes n steps to reach the top.
+
+import java.util.Scanner;
+
+public class Solution {
+
+    public int climbStairs(int n) {
+        if (n <= 2) return n;
+
+        int first = 1;
+        int second = 2;
+        int result = 0;
+
+
+        for (int i = 3; i <= n; i++) {
+            result = first + second;
+            first = second;
+            second = result;
+        }
+
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Solution sol = new Solution();
+
+        int n = scanner.nextInt();
+
+        int ways = sol.climbStairs(n);
+        System.out.println(ways);
+
+        scanner.close();
+    }
+}
+
+##
+Given an integer array nums, find the  subarray with the largest sum, and return its sum.
+
+import java.util.Scanner;
+
+public class Solution {
+
+    public int maxSubArray(int[] nums) {
+        int currentSum = nums[0];
+        int maxSum = nums[0];
+
+        for (int i = 1; i < nums.length; i++) {
+            currentSum = Math.max(nums[i], currentSum + nums[i]);
+            maxSum = Math.max(maxSum, currentSum);
+        }
+
+        return maxSum;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        String line = scanner.nextLine(); 
+        String[] parts = line.trim().split("\\s+"); 
+        int[] nums = new int[parts.length];
+
+        for (int i = 0; i < parts.length; i++) {
+            nums[i] = Integer.parseInt(parts[i]);
+        }
+
+        Solution solution = new Solution();
+        int result = solution.maxSubArray(nums);
+        System.out.println(result);
+
+        scanner.close();
+    }
+}
+
+##
+Given an array of points where points[i] = [xi, yi] represents a point on the X-Y plane, return the maximum number of points that lie on the same straight line.
+
+
+
+
+
+
+import java.util.Scanner;
+
+public class Solution {
+
+    public int maxPoints(int[][] points) {
+        int n = points.length;
+        if(n <= 2) return n;
+
+        int ans = 2;
+
+        for(int i = 0 ;i < n; i++){
+            for(int j = i+1; j < n ; j++){
+                int temp = 2;
+
+                for(int k = j+1 ; k<n ; k++ ){                   
+                    int x = (points[j][1] - points[i][1]) * (points[k][0] - points[i][0]);
+                    int y = (points[k][1] - points[i][1]) * (points[j][0] - points[i][0]);
+                    if(x == y){
+                        temp++;
+                    }
+                }
+                if(temp > ans){
+                    ans = temp;
+                }
+            }
+        }   
+        return ans;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Solution sol = new Solution();
+
+        int n = scanner.nextInt();
+        int[][] points = new int[n][2];
+
+        for (int i = 0; i < n; i++) {
+            points[i][0] = scanner.nextInt();
+            points[i][1] = scanner.nextInt();
+        }
+
+        int result = sol.maxPoints(points);
+        System.out.println(result);
+        
+        scanner.close();
+    }
+}
+##
+You are given a large integer represented as an integer array digits, where each digits[i] is the ith digit of the integer. The digits are ordered from most significant to least significant in left-to-right order. The large integer does not contain any leading 0's.
+
+import java.util.*;
+
+public class Solution
+{
+    public int[] plusOne(int[] digits)
+    {
+        int n = digits.length;
+        for (int i = n - 1; i >= 0; i--) 
+        {
+            if (digits[i] < 9) {
+                digits[i]++;
+                return digits;
+            }
+            
+            digits[i] = 0;
+        }
+        int[] result = new int[n + 1];
+        result[0] = 1;
+        return result;
+    }
+    
+    public static void main(String[] args) 
+    {
+        Scanner scanner = new Scanner(System.in);
+        
+        String[] input = scanner.nextLine().split(" ");
+        
+        int[] digits = new int[input.length];
+        for (int i = 0; i < input.length; i++) 
+        {
+            digits[i] = Integer.parseInt(input[i]);
+        }
+        
+        Solution solution = new Solution();
+        int[] result = solution.plusOne(digits);
+        
+        System.out.print("[");
+        for (int i = 0; i < result.length; i++)
+        {
+            System.out.print(result[i]);
+            if (i < result.length - 1) 
+            {
+                System.out.print(",");
+            }
+        }
+        System.out.println("]");
+        
+        scanner.close();
+    }
+}
+##
+Given an integer n, return the number of prime numbers that are strictly less than n.
+import java.util.Scanner;
+
+public class Solution {
+    public int countPrimes(int n) {
+        if (n <= 2) {
+            return 0; 
+        }
+        
+        boolean[] isPrime = new boolean[n];
+        
+        for (int i = 2; i < n; i++) {
+            isPrime[i] = true;
+        }
+        
+
+        for (int i = 2; i * i < n; i++) {
+            if (isPrime[i]) {
+                for (int j = i * i; j < n; j += i) {
+                    isPrime[j] = false;
+                }
+            }
+        }
+        
+
+        int count = 0;
+        for (int i = 2; i < n; i++) {
+            if (isPrime[i]) {
+                count++;
+            }
+        }
+        
+        return count;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        scanner.close();
+
+        Solution sol = new Solution();
+        System.out.println(sol.countPrimes(n));
+    }
+}
+##
+Given an input string s and a pattern p, implement regular expression matching with support for '.' and '*' where:
+
+import java.util.Scanner;
+
+class Solution {
+    public boolean isMatch(String s, String p) {
+        int m = s.length();
+        int n = p.length();
+        
+        boolean[][] dp = new boolean[m + 1][n + 1];
+        
+        dp[0][0] = true; 
+        for (int j = 2; j <= n; j += 2) {
+            if (p.charAt(j - 1) == '*') {
+                dp[0][j] = dp[0][j - 2];
+            }
+        }
+        
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                
+                if (p.charAt(j - 1) == '.' || p.charAt(j - 1) == s.charAt(i - 1)) {
+               
+                    dp[i][j] = dp[i - 1][j - 1];
+                }
+                else if (p.charAt(j - 1) == '*') {
+                  
+                    dp[i][j] = dp[i][j - 2];
+                    
+                    if (p.charAt(j - 2) == '.' || p.charAt(j - 2) == s.charAt(i - 1)) {
+                        dp[i][j] = dp[i][j] || dp[i - 1][j];
+                    }
+                }
+            }
+        }
+        
+        return dp[m][n];
+    }
+}
+
+public class RegularExpressionMatching {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        String s = scanner.next();
+        
+        String p = scanner.next();
+        
+        Solution solution = new Solution();
+        boolean result = solution.isMatch(s, p);
+
+        System.out.println(result);
+
+        scanner.close();
+    }
+}
+##
+Given two strings s and t, return true if t is an 
+
+import java.util.Scanner;
+import java.util.Arrays;
+
+class Solution {
+    public boolean isAnagram(String s, String t) {
+        if (s.length() != t.length()) return false;
+
+        char[] sArray = s.toCharArray();
+        char[] tArray = t.toCharArray();
+
+        Arrays.sort(sArray);
+        Arrays.sort(tArray);
+
+        return Arrays.equals(sArray, tArray); 
+    }
+}
+
+public class AnagramChecker {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        String s = scanner.next().toLowerCase(); 
+        String t = scanner.next().toLowerCase();
+
+        Solution solution = new Solution();
+        boolean result = solution.isAnagram(s, t);
+
+        System.out.println(result);
+
+        scanner.close();
+    }
+}
+##
+Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i].
+
+import java.util.Scanner;
+
+class Solution {
+    public int[] productExceptSelf(int[] nums) {
+        int n = nums.length;
+        int[] answer = new int[n];
+
+        answer[0] = 1;
+        for (int i = 1; i < n; i++) {
+            answer[i] = nums[i - 1] * answer[i - 1];
+        }
+
+        int suffixProduct = 1;
+        for (int i = n - 1; i >= 0; i--) {
+            answer[i] *= suffixProduct;
+            suffixProduct *= nums[i];
+        }
+
+        return answer;
+    }
+}
+
+public class ProductArrayMain {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+        int[] nums = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            nums[i] = sc.nextInt();
+        }
+
+        Solution solution = new Solution();
+        int[] result = solution.productExceptSelf(nums);
+
+        for (int num : result) {
+            System.out.print(num + " ");
+        }
+        System.out.println();
+
+        sc.close();
+    }
+}
+##
+Convert a non-negative integer num to its English words representation.
+
+import java.util.Scanner;
+
+class Solution {
+    private final String[] belowTwenty = {"", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine",
+                                          "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen",
+                                          "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
+                                          
+    private final String[] tens = {"", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
+    
+    private final String[] thousands = {"", "Thousand", "Million", "Billion"};
+
+    public String numberToWords(int num) {
+        if (num == 0) return "Zero";
+
+        int i = 0;
+        String words = "";
+
+        while (num > 0) {
+            if (num % 1000 != 0) {
+                words = helper(num % 1000) + thousands[i] + " " + words;
+            }
+            num /= 1000;
+            i++;
+        }
+        
+        return words.trim();
+    }
+
+    private String helper(int num) {
+        if (num == 0) return "";
+        else if (num < 20) return belowTwenty[num] + " ";
+        else if (num < 100) return tens[num / 10] + " " + helper(num % 10);
+        else return belowTwenty[num / 100] + " Hundred " + helper(num % 100);
+    }
+}
+
+public class IntegerToEnglishWords {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        int num = scanner.nextInt();
+        
+        Solution solution = new Solution();
+        String result = solution.numberToWords(num);
+
+        System.out.println(result);
+
+        scanner.close();
+    }
+}
+##
+Given a string s consisting of words and spaces, return the length of the last word in the string.
+import java.util.Scanner;
+
+class Solution {
+    public int lengthOfLastWord(String s) {
+        int length = 0;
+        int i = s.length() - 1;
+        
+        while (i >= 0 && s.charAt(i) == ' ') {
+            i--;
+        }
+        
+        while (i >= 0 && s.charAt(i) != ' ') {
+            length++;
+            i--;
+        }
+        
+        return length;
+    }
+}
+
+public class LengthOfLastWord {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        String s = scanner.nextLine();
+        
+        Solution solution = new Solution();
+        int result = solution.lengthOfLastWord(s);
+
+        System.out.println(result);
+        
+        scanner.close();
+    }
+}
+##
+Given an array nums with n objects colored red, white, or blue, sort them in-place so that objects of the same color are adjacent, with the colors in the order red, white, and blue.
+
+import java.util.Scanner;
+
+public class SortColors {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        int n = sc.nextInt();
+        int[] nums = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            nums[i] = sc.nextInt();
+        }
+
+        sortColors(nums);
+
+        System.out.print("[");
+        for (int i = 0; i < n; i++) {
+            System.out.print(nums[i]);
+            if (i != n - 1) {
+                System.out.print(", ");
+            }
+        }
+        System.out.println("]");
+
+        sc.close();
+    }
+
+    public static void sortColors(int[] nums) {
+        int low = 0, mid = 0, high = nums.length - 1;
+
+        while (mid <= high) {
+            if (nums[mid] == 0) {
+                
+                int temp = nums[low];
+                nums[low] = nums[mid];
+                nums[mid] = temp;
+                low++;
+                mid++;
+            } else if (nums[mid] == 1) {
+                mid++;
+            } else { 
+                int temp = nums[mid];
+                nums[mid] = nums[high];
+                nums[high] = temp;
+                high--;
+            }
+        }
+    }
+}
+
+##
+There are n children standing in a line. Each child is assigned a rating value given in the integer array ratings.
+
+import java.util.*;
+
+public class Solution {
+    public int candy(int[] ratings) {
+        int n = ratings.length;
+        int[] candies = new int[n];
+        Arrays.fill(candies, 1); 
+
+        for (int i = 1; i < n; i++) {
+            if (ratings[i] > ratings[i - 1]) {
+                candies[i] = candies[i - 1] + 1;
+            }
+        }
+
+        for (int i = n - 2; i >= 0; i--) {
+            if (ratings[i] > ratings[i + 1]) {
+                candies[i] = Math.max(candies[i], candies[i + 1] + 1);
+            }
+        }
+
+        int totalCandies = 0;
+        for (int candy : candies) {
+            totalCandies += candy;
+        }
+
+        return totalCandies;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        int[] ratings = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            ratings[i] = scanner.nextInt();
+        }
+
+        Solution solution = new Solution();
+        int result = solution.candy(ratings);
+        System.out.println(result);
+
+        scanner.close();
+    }
+}
+##
+Given a sorted array of distinct integers and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.
+
+import java.util.*;
+
+public class Solution {
+    public int searchInsert(int[] nums, int target) {
+        int left=0;
+        int right=nums.length-1;
+        while(left<=right){
+        int mid=left+(right-left)/2;
+        if(nums[mid]==target){
+            return mid;
+        }
+        else if(nums[mid]>target){
+            right=mid-1;
+        }
+        else{
+            left=mid+1;
+        }
+        }
+        return left;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Taking runtime input for the array
+        //System.out.print("Enter number of elements: ");
+        int n = scanner.nextInt();
+        int[] nums = new int[n];
+
+        //System.out.println("Enter sorted array elements:");
+        for (int i = 0; i < n; i++) {
+            nums[i] = scanner.nextInt();
+        }
+
+        // Taking runtime input for the target value
+        //System.out.print("Enter target value: ");
+        int target = scanner.nextInt();
+
+        Solution solution = new Solution();
+        int result = solution.searchInsert(nums, target);
+
+        System.out.println(result);
+        scanner.close();
+    }
+}
+##
+You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money.
+
+import java.util.*;
+
+public class CoinChange {
+    public static int coinChange(int[] coins, int amount) {
+        int max = amount + 1;
+        int[] dp = new int[amount + 1];
+        Arrays.fill(dp, max);  // Fill with a value greater than amount
+        dp[0] = 0;  // Base case: 0 coins needed for amount 0
+
+        for (int i = 1; i <= amount; i++) {
+            for (int coin : coins) {
+                if (i >= coin) {
+                    dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+                }
+            }
+        }
+
+        return dp[amount] == max ? -1 : dp[amount];
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        
+        int n = Integer.parseInt(sc.nextLine()); // Number of coins
+        int[] coins = Arrays.stream(sc.nextLine().split(" "))
+                            .mapToInt(Integer::parseInt).toArray();
+        int amount = Integer.parseInt(sc.nextLine());
+
+        System.out.println(coinChange(coins, amount));
+    }
+}
+##
+Given an array of strings words (without duplicates), return all the concatenated words in the given list of words.
+
+import java.util.*;
+
+public class Solution 
+{
+    public List<String>findAllConcatenatedWordsInADict(String[] words) 
+    {
+        List<String> result=new ArrayList<>();
+        Set<String> wordSet=new HashSet<>(Arrays.asList(words));
+        for (String word : words)
+        {
+            if(word.isEmpty()) continue;
+
+            wordSet.remove(word); 
+            if(canForm(word,wordSet))
+            {
+                result.add(word);
+            }
+            wordSet.add(word); 
+        }
+        return result;
+    }
+
+    private boolean canForm(String word,Set<String> wordSet) 
+    {
+        if(wordSet.isEmpty()) return false;
+
+        boolean[] dp=new boolean[word.length()+1];
+        dp[0]=true;
+        for(int i=1;i<=word.length();i++)
+        {
+            for(int j=0;j<i;j++) 
+            {
+                if(dp[j] && wordSet.contains(word.substring(j,i)))
+                {
+                    dp[i]=true;
+                    break;
+                }
+            }
+        }
+
+        return dp[word.length()];
+    }
+
+ 
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Solution sol = new Solution();
+
+        int n = scanner.nextInt();
+        scanner.nextLine();
+
+        String[] words = new String[n];
+        for (int i = 0; i < n; i++) {
+            words[i] = scanner.nextLine();
+        }
+
+        List<String> result = sol.findAllConcatenatedWordsInADict(words);
+
+        
+        System.out.print("[");
+        for (int i = 0; i < result.size(); i++) {
+            System.out.print("\"" + result.get(i) + "\"");
+            if (i != result.size() - 1) {
+                System.out.print(", ");
+            }
+        }
+        System.out.println("]");
+    }
+}
+##
+You are given a string s and a pattern string p, where p contains exactly one '*' character.
+
+import java.util.Scanner;
+
+public class Solution {
+    public boolean hasMatch(String s, String p) {
+       int index=p.indexOf('*');
+       String prefix=p.substring(0,index);
+       String suffix=p.substring(index+1);
+       int fpos=s.indexOf(prefix);
+       if(fpos==-1){
+           return false;
+       }
+       int spos=s.indexOf(suffix,index+fpos);
+       return spos!=-1;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // Take input for the string s and the pattern p
+        //System.out.println("Enter the string s:");
+        String s = scanner.nextLine();
+        
+        //System.out.println("Enter the pattern p (with exactly one '*'):");
+        String p = scanner.nextLine();
+
+        // Process the input and check if the pattern can be a substring
+        Solution solution = new Solution();
+        boolean result = solution.hasMatch(s, p);
+
+        // Print the output based on the result
+        if (result) {
+            System.out.println("true");
+        } else {
+            System.out.println("false");
+        }
+
+        scanner.close();
+    }
+}
+##
+Given an integer array nums, rotate the array to the right by k steps, where k is non-negative.
+
+import java.util.*;
+class Solution 
+{
+    public void rotate(int[] nums, int k)
+    {
+        k%=nums.length;
+        reverse(nums,0,nums.length-1);
+        reverse(nums,0,k-1);
+        reverse(nums,k,nums.length-1);
+    }
+
+    public void reverse(int[] nums,int left,int right)
+    {
+        while (left<right)
+        {
+            int temp=nums[left];
+            nums[left]=nums[right];
+            nums[right]=temp;
+            left++;
+            right--;
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+
+        int[] nums = new int[n];
+        for (int i = 0; i < n; i++) {
+            nums[i] = scanner.nextInt();
+        }
+
+        int k = scanner.nextInt();
+        Solution solution = new Solution();
+        solution.rotate(nums, k);
+
+        for (int num : nums) {
+            System.out.print(num + " ");
+        }
+
+        scanner.close();
+    }
+}
+
+##
+Given a string s, return whether s is a valid number.
+import java.util.*;
+class Solution 
+{
+    public boolean isNumber(String s)
+    {
+        int n=s.length();
+        int i=0;
+        if(s.charAt(i)=='+' || s.charAt(i)=='-')
+        {
+            ++i;
+        }
+        if(i==n) 
+        {
+            return false;
+        }
+        if(s.charAt(i)=='.' && (i+1==n || s.charAt(i+1)=='e'|| s.charAt(i+1)=='E'))
+        {
+            return false;
+        }
+        int dot=0,e=0;
+        for(int j=i;j<n;++j)
+        {
+            if(s.charAt(j)=='.')
+            {
+                if(e>0 || dot>0) 
+                {
+                    return false;
+                }
+                ++dot;
+            } 
+            else if(s.charAt(j)=='e' || s.charAt(j)=='E') {
+                if(e>0 || j==i || j==n-1) 
+                {
+                    return false;
+                }
+                ++e;
+                if(s.charAt(j+1)=='+' || s.charAt(j+1)=='-')
+                {
+                    if(++j==n-1) 
+                    {
+                        return false;
+                    }
+                }
+            } else if(s.charAt(j)<'0' || s.charAt(j)>'9') 
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+public class Main{
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // Input string to be checked
+        //System.out.println("Enter a string to check if it's a valid number:");
+        String input = scanner.nextLine();
+        
+        // Create Solution object and check the input string
+        Solution solution = new Solution();
+        boolean result = solution.isNumber(input);
+        
+        // Output result
+        if (result) {
+            System.out.println("true");
+        } else {
+            System.out.println("false");
+        }
+
+        scanner.close();
+    }
+}
+##
+Given a binary array nums, return the maximum number of consecutive 1's in the array.
+
+import java.util.*;
+
+
+public class Solution 
+{
+    public int findMaxConsecutiveOnes(int[] nums) 
+    {
+      int answer=0,count=0;
+      for(int i=0;i<nums.length;i++)
+      {
+          if(nums[i]==1)
+          {
+              count++;
+          }
+          else
+          {
+              count=0;
+          }
+          answer=Math.max(count,answer);
+      }
+      return answer;
+    }
+
+
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        String input = scanner.nextLine();
+        String[] inputStrings = input.split(" ");
+        int[] nums = new int[inputStrings.length];
+
+        for (int i = 0; i < inputStrings.length; i++) {
+            nums[i] = Integer.parseInt(inputStrings[i]);
+        }
+
+        Solution solution = new Solution();
+        
+        int result = solution.findMaxConsecutiveOnes(nums);
+        
+        System.out.println(result);
+
+        scanner.close();
+    }
+}
+
+##
+Given an integer array nums, find a 
+
+import java.util.*;
+class Solution
+{
+    public int maxProduct(int[] nums)
+    {
+        int ans=nums[0];
+        int dpMin=nums[0]; 
+        int dpMax=nums[0]; 
+        for (int i=1;i<nums.length;++i) 
+        {
+          final int num=nums[i];
+          final int prevMin=dpMin; 
+          final int prevMax=dpMax;
+          if(num<0) 
+          {
+            dpMin=Math.min(prevMax*num,num);
+            dpMax=Math.max(prevMin*num,num);
+          }
+          else
+          {
+            dpMin=Math.min(prevMin*num,num);
+            dpMax=Math.max(prevMax*num,num);
+          }
+          ans=Math.max(ans,dpMax);
+        }
+        return ans;
+        }
+}
+public class Main{
+
+ public static void main(String[] args) 
+    {
+        Scanner scanner = new Scanner(System.in);
+        
+        String input = scanner.nextLine();
+        String[] inputStrings = input.split(" ");
+        int[] nums = new int[inputStrings.length];
+
+        for (int i = 0; i < inputStrings.length; i++)
+        {
+            nums[i] = Integer.parseInt(inputStrings[i]);
+        }
+
+        Solution solution = new Solution();
+        
+        int result = solution.maxProduct(nums);
+        
+        System.out.println(result);
+
+        scanner.close();
+    }
+
+}
+##
+Given a string containing just the characters '(' and ')', return the length of the longest valid (well-formed) parentheses 
+
+import java.util.*;
+public class Solution
+{
+    public int longestValidParentheses(String s)
+    {
+        if(s.length()==0)
+        {
+            return 0;
+        }
+        int maxlen=0;
+        int left=0;
+        int right=0;
+        for(int i=0;i<s.length();i++)
+        {
+            if(s.charAt(i)=='('){
+                left++;
+            }
+            else
+            {
+                right++;
+            }
+            if(left==right)
+            {
+                maxlen=Math.max(maxlen,2*right);
+            }
+            if(right>left)
+            {
+                left=right=0;
+            }
+        }
+        left=right=0;
+        for(int i=s.length()-1;i>=0;i--)
+        {
+            if(s.charAt(i)=='(')
+            {
+                left++;
+            }
+            else
+            {
+                right++;
+            }
+            if(left==right)
+            {
+                maxlen=Math.max(maxlen,2*left);
+            }
+            if(left>right)
+            {
+                left=right=0;
+            }
+        }
+        return maxlen;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        java.util.Scanner scanner = new java.util.Scanner(System.in);
+        String s = scanner.nextLine().trim(); 
+        int result = solution.longestValidParentheses(s);
+        System.out.println(result);
+        scanner.close();
+    }
+}
+##
+There are n kids with candies.
+import java.util.*;
+public class Solution 
+{
+    public static List<Boolean> kidsWithCandies(int[] candies, int extraCandies)
+    {
+        int maxCandies=0;
+        for(int candy:candies)
+        {
+            maxCandies=Math.max(maxCandies,candy);
+        }
+        List<Boolean> result=new ArrayList<>();
+        for(int candy:candies)
+        {
+            if(candy+extraCandies>=maxCandies) 
+            {
+                result.add(true);
+            } 
+            else
+            {
+                result.add(false);
+            }
+        }
+        
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        int n = scanner.nextInt();
+
+        int[] candies = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            candies[i] = scanner.nextInt();
+        }
+
+        int extraCandies = scanner.nextInt();
+
+       // Compute the result
+        List<Boolean> result = kidsWithCandies(candies, extraCandies);
+
+        // Display the result
+        System.out.println(result);
+
+        scanner.close();
+    }
+}
+##
+Given two strings text1 and text2, return the length of their longest common subsequence. If there is no common subsequence, return 0.
+
+import java.util.Scanner;
+
+public class Solution {
+
+    public static int longestCommonSubsequence(String text1, String text2) {    
+    int[] dp = new int[text1.length()];        
+        for (char c : text2.toCharArray()) {
+            int curLen = 0;
+            for (int i = 0; i < text1.length(); i++) {
+                if (curLen < dp[i]) {
+                    curLen = dp[i];
+                } else if (text1.charAt(i) == c) {
+                    dp[i] = curLen + 1;
+                }
+            }
+        } 
+ int max = 0;
+        for (int num : dp) {
+            if (num > max) {
+                max = num;
+            }
+        }
+        return max;
+}
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        String text1 = scanner.nextLine();
+
+       
+        String text2 = scanner.nextLine();
+
+        // Compute and display the LCS length
+        int result = longestCommonSubsequence(text1, text2);
+        System.out.println(result);
+
+        scanner.close();
+    }
+}
+
+##
+Given two strings s and t, return the number of distinct subsequences of s which equals t.
+
+import java.util.*;
+class Solution {
+    public int numDistinct(String s, String t) {
+        int m = s.length(), n = t.length();
+        int[][] f = new int[m + 1][n + 1];
+        for (int i = 0; i < m + 1; ++i) {
+            f[i][0] = 1;
+        }
+        for (int i = 1; i < m + 1; ++i) {
+            for (int j = 1; j < n + 1; ++j) {
+                f[i][j] = f[i - 1][j];
+                if (s.charAt(i - 1) == t.charAt(j - 1)) {
+                    f[i][j] += f[i - 1][j - 1];
+                }
+            }
+        }
+        return f[m][n];
+    }
+}
+public class Main{
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        String s = scanner.nextLine();
+
+        String t = scanner.nextLine();
+
+        Solution solution = new Solution();
+        int result = solution.numDistinct(s, t);
+
+        System.out.println(result);
+
+        scanner.close();
+    }
+}
