@@ -1,0 +1,67 @@
+intersection
+
+class Solution {
+    public int[] intersection(int[] nums1, int[] nums2) {
+        HashSet<Integer> set1=new HashSet<>();
+        HashSet<Integer> resSet=new HashSet<>();
+        for(int num:nums1){
+            set1.add(num);
+        }
+        for(int num:nums2){
+            if(set1.contains(num)){
+                resSet.add(num);
+            }
+        }
+        int[] res = new int[resSet.size()];
+        Integer[] temp = resSet.toArray(new Integer[0]);
+
+         for (int i = 0; i < temp.length; i++) {
+            res[i] = temp[i];
+        }
+        return res;
+
+    }
+}
+##
+subarraySum
+
+class Solution {
+    public int subarraySum(int[] nums, int k) {
+        int sum=0;int c=0;
+        HashMap<Integer,Integer> map=new HashMap<>();
+        map.put(0,1);
+        for(int num:nums){
+            sum+=num;
+            if(map.containsKey(sum-k)){
+                c+=map.get(sum-k);
+            }
+        map.put(sum,map.getOrDefault(sum,0)+1);
+
+        }
+        return c;
+        
+    }
+}
+##
+minPatches
+
+ class Solution {
+    public int minPatches(int[] nums, int n) {
+        long miss=1;int i=0;
+        int patch=0;
+        while(miss<=n){
+            if(i<nums.length&&nums[i]<=miss){
+                 miss+=nums[i];
+                 i++;
+            }
+            else{
+                patch++;
+
+                miss=2*miss;
+                }
+
+
+        }
+        return patch;
+    }
+}
