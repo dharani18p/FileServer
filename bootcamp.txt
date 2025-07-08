@@ -65,3 +65,74 @@ minPatches
         return patch;
     }
 }
+
+##
+countSubarrays
+
+class Solution {
+    public long countSubarrays(int[] nums, long k) {
+        long count = 0;
+        long sum = 0;
+        int left = 0;
+
+        for (int right = 0; right < nums.length; right++) {
+            sum += nums[right];
+            
+            while (sum * (right - left + 1) >= k) {
+                sum -= nums[left];
+                left++;
+            }
+
+            count += (right - left + 1);
+        }
+
+        return count;
+    }
+}
+##
+numRescueBoats
+
+import java.util.Arrays;
+
+class Solution {
+    public int numRescueBoats(int[] people, int limit) {
+        Arrays.sort(people);  
+        int l = 0;
+        int r = people.length - 1;
+        int boats = 0;
+
+        while (l <=r) {
+            if (people[l] + people[r] <= limit) {
+                l++;
+            }
+            r--;
+            boats++;
+        }
+
+        return boats;
+    }
+}
+
+##'
+twoSum
+
+class Solution {
+    public int[] twoSum(int[] nums, int target) {
+        int first=0;
+
+        int sec=0;
+        for(int k=0;k<nums.length;k++){
+            for(int j=k+1;j<nums.length;j++){
+            if(nums[k]+nums[j]==target){
+                first=k;
+                sec=j;
+            }
+
+        }
+        }
+        return new int[]{first,sec};
+    
+    
+}
+}
+
