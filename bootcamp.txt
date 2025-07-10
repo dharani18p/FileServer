@@ -65,7 +65,6 @@ minPatches
         return patch;
     }
 }
-
 ##
 countSubarrays
 
@@ -112,7 +111,6 @@ class Solution {
         return boats;
     }
 }
-
 ##
 twoSum
 
@@ -135,5 +133,191 @@ class Solution {
     
 }
 }
+##
+maxSlidingWindow
+import java.util.*;
+
+class Solution {
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        if (nums == null || k <= 0) return new int[0];
+
+        int n = nums.length;
+        int[] result = new int[n - k + 1];
+        Deque<Integer> deque = new LinkedList<>();
+
+        for (int i = 0; i < n; i++) {
+            while (!deque.isEmpty() && deque.peekFirst() < i - k + 1)
+                deque.pollFirst();
+
+            while (!deque.isEmpty() && nums[deque.peekLast()] < nums[i])
+                deque.pollLast();
+
+            deque.offerLast(i); 
+
+            if (i >= k - 1)
+                result[i - k + 1] = nums[deque.peekFirst()];
+        }
+
+        return result;
+    }
+}
+##
+threeSumClosest
+import java.util.*;
+
+class Solution {
+    public int threeSumClosest(int[] nums, int target) {
+        Arrays.sort(nums);
+        int closest = nums[0] + nums[1] + nums[2];
+        
+        for (int i = 0; i < nums.length - 2; i++) {
+            int left = i + 1, right = nums.length - 1;
+            
+            while (left < right) {
+                int sum = nums[i] + nums[left] + nums[right];
+                
+                if (Math.abs(sum - target) < Math.abs(closest - target)) {
+                    closest = sum;
+                }
+                
+                if (sum < target) {
+                    left++;
+                } else {
+                    right--;
+                }
+            }
+        }
+        
+        return closest;
+    }
+}
+##
+missingNumber
+class Solution {
+    public int missingNumber(int[] nums) {
+        int n = nums.length;
+        int expectedSum = n * (n + 1) / 2;
+        int actualSum = 0;
+        
+        for (int num : nums) {
+            actualSum += num;
+        }
+        
+        return expectedSum - actualSum;
+    }
+}
+##
+maxEnvelopes
+
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String inputLine = scanner.nextLine().trim();
+
+        // Clean up input string and parse it
+        inputLine = inputLine.replaceAll("\\[\\[", "").replaceAll("]]", "");
+        String[] pairStrings = inputLine.split("\\],\\[");
+
+        int[][] envelopes = new int[pairStrings.length][2];
+        for (int i = 0; i < pairStrings.length; i++) {
+            String[] nums = pairStrings[i].split(",");
+            envelopes[i][0] = Integer.parseInt(nums[0].trim());
+            envelopes[i][1] = Integer.parseInt(nums[1].trim());
+        }
+
+        Solution solution = new Solution();
+        int result = solution.maxEnvelopes(envelopes);
+        System.out.println(result);
+    }
+}
+class Solution {
+
+    public int maxEnvelopes(int[][] nums) {
+       Arrays.sort(nums,(a,b)->{
+           if (a[0]==b[0]){
+               return b[1]-a[1];
+           }
+           return a[0]-b[0];
+       });
+       int n=nums.length;
+       int height[] =new int[n+1];
+       height[1]=nums[0][1];
+       int cnt=1;
+       for(int i=1;i<n;i++){
+           if(height[cnt]<nums[i][1]){
+               cnt++;
+               height[cnt]=nums[i][1];
+           }
+           else{
+               int l=0,h=cnt;
+               while(l<h){
+                   int m=(l+h)/2;
+                   if(height[m]<nums[i][1]) l=m+1;
+                   h=m;
+               }
+               int p=1;
+               if(height[p]<nums[i][1]){
+                   p=l;
+                   height[p]=nums[i][1];
+               }
+           }
+       }
+       return cnt;
+    }
+}
+
+##
+findMinArrowShots
+
+import java.util.*;
+
+class Solution {
+    public int findMinArrowShots(int[][] points) {
+        if (points.length == 0) return 0;
+        
+        Arrays.sort(points, (a, b) -> Integer.compare(a[1], b[1]));
+        
+        int arrows = 1;
+        int end = points[0][1];
+        
+        for (int i = 1; i < points.length; i++) {
+            if (points[i][0] > end) {
+                arrows++;
+                end = points[i][1];
+            }
+        }
+        
+        return arrows;
+    }
+}
+##
+firstUniqChar
+
+class Solution {
+    public int firstUniqChar(String s) {
+        int[] count = new int[26];
+        
+        for (char c : s.toCharArray()) {
+            count[c - 'a']++;
+        }
+        
+        for (int i = 0; i < s.length(); i++) {
+            if (count[s.charAt(i) - 'a'] == 1) {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+}
+##
+summa
+
+venna
+
+
 
 
