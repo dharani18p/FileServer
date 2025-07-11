@@ -314,6 +314,66 @@ class Solution {
     }
 }
 ##
+easy5
+class Solution {
+    public int numJewelsInStones(String jewels, String stones) {
+        int count=0;
+        for(char a:stones.toCharArray()){
+            if(jewels.indexOf(a)!=-1){
+                count++;
+            }
+        }
+        return count;
+
+        
+    }
+}
+##
+mid5
+class Solution {
+    public String findLongestWord(String s, List<String> dictionary) {
+        String longest = "";
+
+        for (String word : dictionary) {
+            if (word.length() < longest.length() ||
+                (word.length() == longest.length() && word.compareTo(longest) > 0)) {
+                continue;
+            }
+
+            int pos = -1;
+            boolean isSubsequence = true;
+
+            for (int i = 0; i < word.length(); i++) {
+                pos = s.indexOf(word.charAt(i), pos + 1);
+                if (pos == -1) {
+                    isSubsequence = false;
+                    break;
+                }
+            }
+
+            if (isSubsequence) {
+                longest = word;
+            }
+        }
+
+        return longest;
+    }
+}
+##
+hard5
+class Solution {
+    public String shortestPalindrome(String s) {
+        String rev = new StringBuilder(s).reverse().toString();
+        for (int i = 0; i < s.length(); i++) {
+            if (s.startsWith(rev.substring(i))) {
+                return rev.substring(0, i) + s;
+            }
+        }
+        return "";
+    }
+}
+
+##
 summa
 
 venna
