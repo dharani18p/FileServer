@@ -374,6 +374,155 @@ class Solution {
 }
 
 ##
+easy6
+import java.util.*;
+
+public class Solution {
+
+    public boolean checkIfExist(int[] arr) {
+       for(int i=0;i<arr.length;i++)
+       {
+           for(int j=0;j<arr.length;j++){
+               if(arr[i]==arr[j]*2)return true;
+           }
+       }
+       return false;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Solution sol = new Solution();
+
+        // Read the entire line as input
+        int n = scanner.nextInt();
+        int[] arr = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            arr[i] = scanner.nextInt();
+        }
+
+        boolean result = sol.checkIfExist(arr);
+        System.out.println(result);
+    }
+}
+##
+mid6
+import java.util.*;
+
+public class Solution
+{
+    public String decodeString(String s)
+    {
+        String res="";
+        int i=0;
+        Stack<Character> st=new Stack<>();
+        Stack<Integer> inst=new Stack<>();
+        int num=0;
+        while (i<s.length()){
+            
+            if(s.charAt(i)=='['){
+                inst.push(num);
+                st.push(s.charAt(i));
+                num=0;
+            }
+            else if(s.charAt(i)-'0'>=0 && s.charAt(i)-'0'<=9){
+                num=num*10+s.charAt(i)-'0';
+            }
+            else if(s.charAt(i)==']'){
+                String c="";
+                int current;
+                String cur="";
+                while (st.isEmpty()==false && st.peek()!='['){
+                    cur=String.valueOf(st.pop())+cur;
+                }
+                if (!st.isEmpty()) st.pop(); 
+                current = inst.isEmpty() ? 1 : inst.pop(); 
+                for(int j=0;j<current;j++){
+                    c+=cur;
+                }
+                for (int j = 0; j < c.length(); j++) {
+                    st.push(c.charAt(j));
+                }
+                
+            }
+            else {
+                st.push(s.charAt(i));
+            }
+            i++;
+        }
+        while (!st.isEmpty()) {
+            res = st.pop() + res;
+        }
+        return res;      
+      
+    }
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        String input = scanner.nextLine();
+
+        Solution solution = new Solution();
+        String result = solution.decodeString(input);
+        System.out.println( result);
+
+        scanner.close();
+    }
+}
+##
+hard6
+class Solution {
+    public List<String> fullJustify(String[] words, int maxWidth) {
+        List<String> result = new ArrayList<>();
+        int index = 0;
+
+        while (index < words.length) {
+            int totalChars = words[index].length();
+            int last = index + 1;
+
+            // Determine how many words fit into the current line
+            while (last < words.length) {
+                if (totalChars + 1 + words[last].length() > maxWidth) break;
+                totalChars += 1 + words[last].length();
+                last++;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            int numberOfWords = last - index;
+            int numberOfGaps = numberOfWords - 1;
+
+            // If it's the last line or only one word fits, left-justify
+            if (last == words.length || numberOfWords == 1) {
+                for (int i = index; i < last; i++) {
+                    sb.append(words[i]);
+                    if (i < last - 1) sb.append(" ");
+                }
+                while (sb.length() < maxWidth) {
+                    sb.append(" ");
+                }
+            } else {
+                int totalSpaces = maxWidth - (totalChars - numberOfGaps);
+                int spacePerGap = totalSpaces / numberOfGaps;
+                int extraSpaces = totalSpaces % numberOfGaps;
+
+                for (int i = index; i < last; i++) {
+                    sb.append(words[i]);
+                    if (i < last - 1) {
+                        int spacesToAdd = spacePerGap + (extraSpaces-- > 0 ? 1 : 0);
+                        for (int s = 0; s < spacesToAdd; s++) {
+                            sb.append(" ");
+                        }
+                    }
+                }
+            }
+
+            result.add(sb.toString());
+            index = last;
+        }
+
+        return result;
+    }
+}
+##
 summa
 
 venna
