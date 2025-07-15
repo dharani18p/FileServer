@@ -549,42 +549,120 @@ class Solution {
 }
 ##
 hard7
-import java.util.PriorityQueue;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Scanner;
 
-/**
- * Definition for singly-linked list.
- * public class ListNode {
- *     int val;
- *     ListNode next;
- *     ListNode() {}
- *     ListNode(int val) { this.val = val; }
- *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
- * }
- */
-class Solution {
+public class Solution {
+
+    // Static Node structure
+    static class ListNode {
+        int val;
+        ListNode next;
+
+        ListNode(int x) {
+            val = x;
+            next = null;
+        }
+    }
+
+    // Merge k sorted linked lists
     public ListNode mergeKLists(ListNode[] lists) {
-        PriorityQueue<ListNode> pq = new PriorityQueue<>((a, b) -> a.val - b.val);
+         if(lists==null || lists.length==0) return null;
+         return mergek(lists,0,lists.length-1);
+         
+        }
+    private ListNode mergek(ListNode[] lists,int st,int end){
+        if(st==end) return lists[st];
+        if(st+1==end) return  merge(lists[st],lists[end]);
+        int m=st+(end-st)/2;
+        ListNode l=mergek(lists,st,m);
+        ListNode r=mergek(lists,m+1,end);
+        return merge(l,r);
+    }
+    private ListNode merge(ListNode l1,ListNode l2){
+        ListNode dummy=new ListNode(0);
+        ListNode curr=dummy;
+        while(l1!=null &&l2!=null){
+        if(l1.val<l2.val){
+            curr.next=l1;
+            l1=l1.next;
+        }
+        else{
+                curr.next=l2;
+            l2=l2.next;
+        }
+        curr=curr.next;}
+        curr.next=(l1!=null)?l1:l2;
+        return dummy.next;
+    }
 
-        for (ListNode head : lists) {
-            if (head != null) {
-                pq.offer(head);
-            }
+        
+    
+
+    // Create linked list from array
+    public ListNode createList(int[] values) {
+        if (values.length == 0) return null;
+        ListNode head = new ListNode(values[0]);
+        ListNode current = head;
+
+        for (int i = 1; i < values.length; i++) {
+            current.next = new ListNode(values[i]);
+            current = current.next;
         }
 
-        ListNode dummy = new ListNode(0);
-        ListNode temp = dummy;
+        return head;
+    }
 
-        while (!pq.isEmpty()) {
-            ListNode node = pq.poll();  
-            temp.next = node;            
-            temp = temp.next;             
+    // Convert a single list to LeetCode-style string
+    public String listToString(ListNode head) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        while (head != null) {
+            sb.append(head.val);
+            if (head.next != null) sb.append(",");
+            head = head.next;
+        }
+        sb.append("]");
+        return sb.toString();
+    }
 
-            if (node.next != null) {
-                pq.offer(node.next);      
+    // Convert array of linked lists to LeetCode-style input string
+    public String listsToInputString(ListNode[] lists) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for (int i = 0; i < lists.length; i++) {
+            sb.append(listToString(lists[i]));
+            if (i < lists.length - 1) sb.append(",");
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+    // Main method
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Solution solution = new Solution();
+
+        int k = scanner.nextInt(); // Number of linked lists
+        ListNode[] lists = new ListNode[k];
+
+        for (int i = 0; i < k; i++) {
+            int n = scanner.nextInt(); // Number of elements in list i
+            int[] values = new int[n];
+            for (int j = 0; j < n; j++) {
+                values[j] = scanner.nextInt();
             }
+            lists[i] = solution.createList(values);
         }
 
-        return dummy.next; 
+        //System.out.println("Input: lists = " + solution.listsToInputString(lists));
+
+        ListNode mergedHead = solution.mergeKLists(lists);
+
+        System.out.println(solution.listToString(mergedHead));
+
+        scanner.close();
     }
 }
 ##
