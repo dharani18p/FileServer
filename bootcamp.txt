@@ -523,6 +523,71 @@ class Solution {
     }
 }
 ##
+easy7
+class Solution {
+    public boolean isPowerOfTwo(int n) {
+        return (n > 0 && (n & (n - 1)) == 0);
+    }
+}
+33
+mid7
+class Solution {
+    public int reverse(int x) {
+         long rev=0;
+        while(x!=0){
+
+            int rem=x%10;
+            rev=rev*10+rem;
+            x/=10;
+
+        }
+        if(rev<Integer.MIN_VALUE||rev>Integer.MAX_VALUE){
+            return 0;
+        }
+        return (int) rev;
+    }
+}
+##
+hard7
+import java.util.PriorityQueue;
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode mergeKLists(ListNode[] lists) {
+        PriorityQueue<ListNode> pq = new PriorityQueue<>((a, b) -> a.val - b.val);
+
+        for (ListNode head : lists) {
+            if (head != null) {
+                pq.offer(head);
+            }
+        }
+
+        ListNode dummy = new ListNode(0);
+        ListNode temp = dummy;
+
+        while (!pq.isEmpty()) {
+            ListNode node = pq.poll();  
+            temp.next = node;            
+            temp = temp.next;             
+
+            if (node.next != null) {
+                pq.offer(node.next);      
+            }
+        }
+
+        return dummy.next; 
+    }
+}
+##
 summa
 
 venna
