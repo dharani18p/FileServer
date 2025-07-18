@@ -529,7 +529,7 @@ class Solution {
         return (n > 0 && (n & (n - 1)) == 0);
     }
 }
-33
+##
 mid7
 class Solution {
     public int reverse(int x) {
@@ -665,6 +665,299 @@ public class Solution {
         scanner.close();
     }
 }
+##
+easy8
+import java.util.LinkedList;
+import java.util.Queue;
+
+class RecentCounter {
+    private Queue<Integer> queue;
+
+    public RecentCounter() {
+        queue = new LinkedList<>();
+    }
+
+    public int ping(int t) {
+        queue.add(t);
+        while (!queue.isEmpty() && queue.peek() < t - 3000) {
+            queue.poll();
+        }
+        return queue.size();
+    }
+}
+
+##
+mid8
+import java.util.Scanner;
+
+public class Solution {
+
+    public int primePalindrome(int n) 
+    {
+     if(n<=2) return 2;
+     else if(n<=3) return 3; 
+     else if(n<=5) return 5;
+     else if(n<=7) return 7; 
+     else if(n<=11) return 11; 
+     while(true){
+         if(n%2==0){
+             n++;
+             continue;
+         }
+         
+         String s = Integer.toString(n);
+         int len = s.length();
+         
+         if(len%2==0){
+             n=(int) Math.pow(10,len);
+             continue;
+         }
+         int temp = n, rev=0, rem;
+         while(temp!=0){
+             rem=temp%10;
+             rev = rev*10+rem;
+             temp = temp/10;
+         }
+         if(n==rev){
+         boolean isprime = true;
+         for(int i=3;i*i<=n;i+=2){
+             if(n%i==0){
+                 isprime=false;
+                 break;
+            }
+                 
+        }
+        if(isprime){
+            return n;
+            
+        }
+     }
+     n++;
+     
+    } 
+     
+     
+     
+    }
+
+    boolean isPrime(int num) {
+        if (num < 2) return false;
+        if (num % 2 == 0 && num != 2) return false;
+        for (int j = 3; j <= Math.sqrt(num); j += 2) {
+            if (num % j == 0) return false;
+        }
+        return true;
+    }
+
+    boolean isPal(int num) {
+        int original = num, r = 0;
+        while (num > 0) {
+            r = r * 10 + num % 10;
+            num /= 10;
+        }
+        return original == r;
+    }
+
+    int len(int n) {
+        return (int) Math.log10(n) + 1;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+
+        Solution sol = new Solution();
+        int result = sol.primePalindrome(n);
+        System.out.println(result);
+
+        scanner.close();
+    }
+}
+
+##
+hard8
+import java.util.Scanner;
+
+public class Solution {
+
+    public int findKthNumber(int n, int k) {
+        int curr = 1;
+        k = k-1;
+        while(k>0){
+            int count =0;
+            long first = curr;
+            long next = curr+1;
+            while(first<=n){
+                count+=Math.min(n+1,next)-first;
+                first*=10;
+                next*=10;
+            }
+            if(count<=k){
+                curr++;
+                k=k-count;
+            }
+            else{
+                curr*=10;
+                k=k-1;
+            }
+        }
+        return curr;
+    }
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        try {
+            int n = scanner.nextInt();
+            int k = scanner.nextInt();
+
+            Solution sol = new Solution();
+            int result = sol.findKthNumber(n, k);
+            System.out.println(result);
+        } catch (Exception e) {
+            // Avoid crashing in judge environment. Print nothing or a default value.
+        } finally {
+            scanner.close();
+        }
+    }
+}
+
+##
+easy9
+import java.util.Scanner;
+import java.util.HashMap;
+class ListNode {
+    int val;
+    ListNode next;
+    ListNode(int val) 
+{
+        this.val = val;
+        this.next = null;
+    }
+}
+public class Main {
+    public boolean hasCycle(ListNode head) {
+        HashMap <ListNode,Boolean> Visited = new HashMap<>();
+        while(head!=null){
+            if(Visited.containsKey(head)){
+                return true;
+                
+            }
+            Visited.put(head,true);
+            head = head.next;
+        }
+        return false;
+        
+        
+    }
+    public static ListNode createLinkedList(int[] values, int pos) {
+        ListNode dummy = new ListNode(0);
+        ListNode current = dummy;
+        ListNode cycleNode = null;
+
+        for (int i = 0; i < values.length; i++) {
+            current.next = new ListNode(values[i]);
+            current = current.next;
+            if (i == pos) {
+                cycleNode = current;
+            }
+        }
+
+        if (pos != -1) {
+            current.next = cycleNode;
+        }
+        return dummy.next;
+    }
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Main detector = new Main(); 
+        int n = scanner.nextInt();
+        int[] values = new int[n];
+        for (int i = 0; i < n; i++) {
+            values[i] = scanner.nextInt();
+        }
+
+        int pos = scanner.nextInt();
+        ListNode head = createLinkedList(values, pos);
+        boolean result = detector.hasCycle(head);
+        System.out.println( result);
+    }
+}
+
+##
+mid9
+import java.util.*;
+
+class Solution {
+    public int eraseOverlapIntervals(int[][] intervals) {
+        int res = 0;
+        Arrays.sort(intervals,(a,b)->a[1]-b[1]);
+        int prev_end = intervals[0][1];
+        for(int i= 1; i < intervals.length; i++){
+            if(prev_end >intervals[i][0] ){
+                res++;
+            }
+            else{
+                prev_end = intervals[i][1];
+            }
+        }
+        return res;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String inputLine = scanner.nextLine().trim();
+
+        // Remove the outer brackets and split into individual intervals
+        inputLine = inputLine.replaceAll("\\[\\[", "").replaceAll("]]", "");
+        String[] intervalStrings = inputLine.split("\\],\\[");
+
+        int[][] intervals = new int[intervalStrings.length][2];
+        for (int i = 0; i < intervalStrings.length; i++) {
+            String[] parts = intervalStrings[i].split(",");
+            intervals[i][0] = Integer.parseInt(parts[0].trim());
+            intervals[i][1] = Integer.parseInt(parts[1].trim());
+        }
+
+        Solution solution = new Solution();
+        int result = solution.eraseOverlapIntervals(intervals);
+        System.out.println(result);
+    }
+}
+
+##hard9
+class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        ListNode newhead=null,newtail=null,curr=head;
+        ListNode temp=head;
+        int count=0;
+        while(temp!=null){
+            temp=temp.next;
+            count++;
+        }
+        while(count>=k){
+            ListNode grphead=null,grptail=curr;
+            for(int i=0;i<k;i++){
+                ListNode next=curr.next;
+                curr.next=grphead;
+                grphead=curr;
+                curr=next;
+            }
+            if(newhead==null){
+                newhead=grphead;
+                newtail=grptail;
+            }
+            else{
+                newtail.next=grphead;
+                newtail=grptail;
+            }
+            count=count-k;
+        }
+        newtail.next=curr;
+        return newhead;
+    }
+}
+
 ##
 summa
 
