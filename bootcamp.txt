@@ -924,7 +924,6 @@ public class Main {
         System.out.println(result);
     }
 }
-
 ##
 hard9
 class Solution {
@@ -958,7 +957,6 @@ class Solution {
         return newhead;
     }
 }
-
 ##
 summa
 
