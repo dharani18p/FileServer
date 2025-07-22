@@ -926,37 +926,600 @@ public class Main {
 }
 ##
 hard9
+import java.util.*;
+
+// Definition for singly-linked list.
+class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+
 class Solution {
-    public ListNode reverseKGroup(ListNode head, int k) {
-        ListNode newhead=null,newtail=null,curr=head;
-        ListNode temp=head;
-        int count=0;
-        while(temp!=null){
-            temp=temp.next;
-            count++;
+    public ListNode reverseKGroup(ListNode head, int k) { 
+        if(head==null) return head;
+        ListNode tail=head;
+        for(int i=0;i<k;i++){
+            if(tail==null) return head;
+            tail=tail.next;
+            
         }
-        while(count>=k){
-            ListNode grphead=null,grptail=curr;
-            for(int i=0;i<k;i++){
-                ListNode next=curr.next;
-                curr.next=grphead;
-                grphead=curr;
-                curr=next;
-            }
-            if(newhead==null){
-                newhead=grphead;
-                newtail=grptail;
-            }
-            else{
-                newtail.next=grphead;
-                newtail=grptail;
-            }
-            count=count-k;
+        ListNode nh=reverse(head,tail);
+        head.next=reverseKGroup(tail,k);
+        return nh;
+    
+    }
+    ListNode reverse(ListNode curr,ListNode end){
+        ListNode prev=null;
+        while(curr!=end){
+            ListNode next=curr.next;
+            curr.next=prev;
+            prev=curr;
+            curr=next;
         }
-        newtail.next=curr;
-        return newhead;
+        return prev;
+    }
+
+    
+
+    public List<Integer> toList(ListNode head) {
+        List<Integer> result = new ArrayList<>();
+        while (head != null) {
+            result.add(head.val);
+            head = head.next;
+        }
+        return result;
     }
 }
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Solution solution = new Solution();
+
+        //System.out.println("Enter list (e.g., [1,2,3,4,5]):");
+        String input = scanner.nextLine().trim();
+        input = input.replaceAll("[\\[\\]\\s]", "");
+        String[] parts = input.split(",");
+
+        //System.out.print("Enter k: ");
+        int k = scanner.nextInt();
+
+        // Build linked list
+        ListNode dummy = new ListNode(0);
+        ListNode current = dummy;
+        for (String part : parts) {
+            if (!part.isEmpty()) {
+                current.next = new ListNode(Integer.parseInt(part));
+                current = current.next;
+            }
+        }
+
+        ListNode head = dummy.next;
+        ListNode newHead = solution.reverseKGroup(head, k);
+
+        // Print output as list
+        List<Integer> result = solution.toList(newHead);
+        //System.out.println("Output:");
+        System.out.println(result);
+
+        scanner.close();
+    }
+}
+##
+easy10
+import java.util.*;
+
+class TreeNode {
+    int val;
+    TreeNode left, right;
+    TreeNode(int x) {
+        val = x;
+    }
+}
+
+public class AverageLevelsInBinaryTree {
+
+    public static TreeNode buildTreeFromInput(String[] input) {
+        if (input.length == 0 || input[0].equalsIgnoreCase("null"))
+            return null;
+
+        TreeNode root = new TreeNode(Integer.parseInt(input[0]));
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        int i = 1;
+
+        while (i < input.length) {
+            TreeNode current = queue.poll();
+
+            if (i < input.length && !input[i].equalsIgnoreCase("null")) {
+                current.left = new TreeNode(Integer.parseInt(input[i]));
+                queue.offer(current.left);
+            }
+            i++;
+
+            if (i < input.length && !input[i].equalsIgnoreCase("null")) {
+                current.right = new TreeNode(Integer.parseInt(input[i]));
+                queue.offer(current.right);
+            }
+            i++;
+        }
+
+        return root;
+    }public static List<Double> averageOfLevels(TreeNode root)
+    {
+       List<Double> res=new ArrayList<>();
+       if(root==null) return res;
+       
+       Queue<TreeNode> q=new LinkedList<>();
+       q.add(root);
+       
+       while(!q.isEmpty()){
+           int level=q.size();
+           double sum=0.0;
+           for(int i=0;i<level;i++){
+               TreeNode curr=q.poll();
+               sum+=curr.val;
+               if(curr.left!=null) q.offer(curr.left);
+               if(curr.right!=null) q.offer(curr.right);
+           }
+           res.add(sum/level);
+       }
+       return res;
+        
+        
+    }
+        public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String line = sc.nextLine();
+        String[] nodes = line.trim().split("\\s+");
+
+        TreeNode root = buildTreeFromInput(nodes);
+        List<Double> averages = averageOfLevels(root);
+
+        System.out.println("Average of each level:");
+        for (double avg : averages) {
+            System.out.printf("%.2f ", avg);
+        }
+    }
+}
+##
+mid10
+import java.util.*;
+
+public class Solution {
+
+    // Definition for singly-linked list.
+    static class ListNode {
+        int val;
+        ListNode next;
+
+        ListNode() {}
+
+        ListNode(int val) {
+            this.val = val;
+        }
+
+        ListNode(int val, ListNode next) {
+            this.val = val;
+            this.next = next;
+        }
+    }
+
+    // Method to delete all nodes with duplicate values
+    public ListNode deleteDuplicates(ListNode head) {
+       ListNode temp=head; 
+       ListNode prev=null;
+       
+       while(temp!=null){
+           boolean dup=false;
+           while(temp.next!=null && temp.val==temp.next.val){
+               dup=true;
+               temp=temp.next;
+           }
+           if(dup){
+               if(prev==null) head=temp.next;
+               else prev.next=temp.next;
+           }
+           else{
+              prev=temp;
+           }
+           temp=temp.next;
+       }
+       return head;
+    }
+
+    // Helper: Create linked list from valid user input
+    public static ListNode buildListFromInput(Scanner scanner) {
+       // System.out.println("Enter sorted linked list values (space-separated integers):");
+        String line = scanner.nextLine().trim();
+
+        if (line.isEmpty()) {
+            System.out.println("Empty input. Creating an empty list.");
+            return null;
+        }
+
+        String[] tokens = line.split("\\s+");
+        ListNode dummy = new ListNode(0);
+        ListNode current = dummy;
+
+        for (String token : tokens) {
+            try {
+                int val = Integer.parseInt(token);
+                current.next = new ListNode(val);
+                current = current.next;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input: '" + token + "' is not an integer. Skipping it.");
+            }
+        }
+
+        return dummy.next;
+    }
+
+    // Helper: Print list as array format
+    public static void printListAsArray(ListNode head) {
+        if (head == null) {
+            System.out.println("[]");
+            return;
+        }
+
+        List<Integer> values = new ArrayList<>();
+        while (head != null) {
+            values.add(head.val);
+            head = head.next;
+        }
+
+        System.out.println(values.toString());
+    }
+
+    // Main method
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Solution solution = new Solution();
+
+        ListNode head = buildListFromInput(scanner);
+        ListNode result = solution.deleteDuplicates(head);
+        printListAsArray(result);
+
+        scanner.close();
+    }
+}
+##
+hard10
+import java.util.*;
+
+class TreeNode {
+    int val;
+    TreeNode left, right;
+    TreeNode(int x) {
+        val = x;
+    }
+}
+
+class Solution {
+    int max_val = Integer.MIN_VALUE;
+
+    public int maxPathSum(TreeNode root) {
+        maximum (root);
+        return max_val;
+    }
+
+    private int maximum(TreeNode node) {
+        if(node == null){
+            return 0;
+        }
+        int left = Math.max(maximum(node.left),0);
+        int right = Math.max(maximum(node.right),0);
+        int curr = left+right+node.val;
+        max_val=Math.max(max_val,curr);
+        return node.val + Math.max (left,right);
+    }
+}
+
+public class Main {
+    public static TreeNode buildTree(String[] nodes) {
+        if (nodes.length == 0 || nodes[0].equals("null")) return null;
+
+        TreeNode root = new TreeNode(Integer.parseInt(nodes[0].trim()));
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        int i = 1;
+
+        while (!queue.isEmpty() && i < nodes.length) {
+            TreeNode curr = queue.poll();
+
+            if (i < nodes.length && !nodes[i].trim().equals("null")) {
+                curr.left = new TreeNode(Integer.parseInt(nodes[i].trim()));
+                queue.offer(curr.left);
+            }
+            i++;
+
+            if (i < nodes.length && !nodes[i].trim().equals("null")) {
+                curr.right = new TreeNode(Integer.parseInt(nodes[i].trim()));
+                queue.offer(curr.right);
+            }
+            i++;
+        }
+        return root;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String input = sc.nextLine();
+        String[] nodes = input.replaceAll("\\[|\\]", "").split(",");
+        TreeNode root = buildTree(nodes);
+        Solution sol = new Solution();
+        int result = sol.maxPathSum(root);
+        System.out.println( result);
+    }
+}
+##
+easy11
+import java.util.*;
+
+// TreeNode class for binary tree nodes
+class TreeNode {
+    int val;
+    TreeNode left, right;
+
+    TreeNode(int x) {
+        val = x;
+    }
+}
+
+// Utility class to store information from recursive calls
+final class TreeInfo {
+    public final int height;
+    public final boolean balanced;
+
+    public TreeInfo(int height, boolean balanced) {
+        this.height = height;
+        this.balanced = balanced;
+    }
+}
+
+// Solution to check if a binary tree is balanced
+class Solution {
+    private int isBalancedTreeHelper(TreeNode root) {
+        if(root==null) return 0;
+        int l=isBalancedTreeHelper(root.left);
+        if(l==-1) return -1;
+        int r=isBalancedTreeHelper(root.right);
+        if(r==-1) return -1;
+        
+        if(Math.abs(l-r)>1) return -1;
+        return Math.max(l,r)+1;
+    }
+    public boolean isBalanced(TreeNode root) {
+        return isBalancedTreeHelper(root)!=-1;
+    }
+}
+
+
+public class Main{
+    // Method to parse LeetCode-style input and build tree
+    public static TreeNode buildTreeFromLeetCodeInput(String input) {
+        input = input.trim();
+        if (!input.startsWith("[") || !input.endsWith("]")) return null;
+        input = input.substring(1, input.length() - 1); // remove brackets
+
+        if (input.isEmpty()) return null;
+
+        String[] parts = input.split(",");
+        List<TreeNode> nodes = new ArrayList<>();
+
+        for (String part : parts) {
+            part = part.trim();
+            if (part.equals("null")) {
+                nodes.add(null);
+            } else {
+                nodes.add(new TreeNode(Integer.parseInt(part)));
+            }
+        }
+
+        Queue<TreeNode> queue = new LinkedList<>();
+        TreeNode root = nodes.get(0);
+        queue.offer(root);
+        int index = 1;
+
+        while (!queue.isEmpty() && index < nodes.size()) {
+            TreeNode current = queue.poll();
+            if (current != null) {
+                if (index < nodes.size()) {
+                    current.left = nodes.get(index++);
+                    queue.offer(current.left);
+                }
+                if (index < nodes.size()) {
+                    current.right = nodes.get(index++);
+                    queue.offer(current.right);
+                }
+            }
+        }
+
+        return root;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();  // example: [1,2,2,3,3,null,null,4,4]
+
+        TreeNode root = buildTreeFromLeetCodeInput(input);
+        Solution sol = new Solution();
+        boolean output = sol.isBalanced(root);
+
+        System.out.println(output);
+    }
+
+}
+
+##
+mid11
+import java.util.*;
+public class Solution {
+    public int deleteAndEarn(int[] nums) {
+        if(nums.length==1) return nums[0];
+        int[] h=new int[10001];
+        for(int i=0;i<nums.length;i++){
+            h[nums[i]]+=nums[i];
+        }
+        
+        int p1=0,p2=0,b=0;
+        for(int val:h){
+            b=Math.max(p2,val+p1);
+            p1=p2;
+            p2=b;
+        }
+        return p1;
+    }
+
+    
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Solution solution = new Solution();
+        int n = scanner.nextInt();
+        int[] nums = new int[n];
+        for (int i = 0; i < n; i++) {
+            nums[i] = scanner.nextInt();
+        }
+        int result = solution.deleteAndEarn(nums);
+        System.out.println(result);
+    }
+}
+##
+hard11
+import java.util.*;
+
+class TreeNode {
+    int val;
+    TreeNode left, right;
+    TreeNode(int x) {
+        val = x;
+    }
+}
+
+public class Solution {
+    //TYPE YOUR CODE HERE...
+    int cnt=0;
+    public int minCameraCover(TreeNode root){
+        if(post(root)==0) return cnt+1;
+        return cnt;
+    }
+    int post(TreeNode t){
+        if(t==null) return 1;
+        int l=post(t.left);
+        int r=post(t.right);
+        
+        if(l==1&&r==1) return 0;
+        else if(l==0 || r==0) {cnt++ ;return 2;}
+        else return 1;
+        
+        
+    }
+    
+    
+
+    // Build tree from level order input
+    public static TreeNode buildTree(String[] values) {
+        if (values.length == 0 || values[0].equals("null")) return null;
+
+        TreeNode root = new TreeNode(Integer.parseInt(values[0]));
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        int i = 1;
+
+        while (!queue.isEmpty() && i < values.length) {
+            TreeNode current = queue.poll();
+            if (!values[i].equals("null")) {
+                current.left = new TreeNode(Integer.parseInt(values[i]));
+                queue.offer(current.left);
+            }
+            i++;
+            if (i < values.length && !values[i].equals("null")) {
+                current.right = new TreeNode(Integer.parseInt(values[i]));
+                queue.offer(current.right);
+            }
+            i++;
+        }
+        return root;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String line = scanner.nextLine(); // Read space-separated level-order input
+        String[] values = line.trim().split("\\s+");
+
+        TreeNode root = buildTree(values);
+        Solution sol = new Solution();
+        int result = sol.minCameraCover(root);
+        System.out.println(result);
+    }
+}
+##
+easy12
+class Solution {
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        // Both trees are empty
+        if (p == null && q == null) return true;
+
+        // One of the trees is empty
+        if (p == null || q == null) return false;
+
+        // Current values are different
+        if (p.val != q.val) return false;
+
+        // Recursively compare left and right subtrees
+        return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
+    }
+}
+##
+mid12
+class Solution {
+    public List<List<Integer>> pathSum(TreeNode root, int targetSum) {
+        List<List<Integer>> result = new ArrayList<>();
+        List<Integer> currentPath = new ArrayList<>();
+        dfs(root, targetSum, currentPath, result);
+        return result;
+    }
+
+    private void dfs(TreeNode node, int targetSum, List<Integer> path, List<List<Integer>> result) {
+        if (node == null) return;
+
+        path.add(node.val);
+
+        // Check if it's a leaf node and the path sum equals target
+        if (node.left == null && node.right == null && targetSum == node.val) {
+            result.add(new ArrayList<>(path));
+        } else {
+            // Recurse left and right
+            dfs(node.left, targetSum - node.val, path, result);
+            dfs(node.right, targetSum - node.val, path, result);
+        }
+
+        // Backtrack
+        path.remove(path.size() - 1);
+    }
+}
+##
+hard12
+public class Codec {
+    static TreeNode node;
+
+    // Encodes a tree to a single string.
+    public String serialize(TreeNode root) {
+        node=root;
+        return "";
+        
+    }
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String data) {
+        return node;
+        
+    }
+}
+
 ##
 summa
 
