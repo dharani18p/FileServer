@@ -1521,6 +1521,93 @@ public class Codec {
 }
 
 ##
+easy13
+def islandPerimeter(grid):
+    rows, cols = len(grid), len(grid[0])
+    perimeter = 0
+
+    for i in range(rows):
+        for j in range(cols):
+            if grid[i][j] == 1:
+                perimeter += 4
+                if i > 0 and grid[i - 1][j] == 1:  # check top neighbor
+                    perimeter -= 2
+                if j > 0 and grid[i][j - 1] == 1:  # check left neighbor
+                    perimeter -= 2
+    return perimeter
+##
+mid13
+class Solution {
+    int pre=0;
+    Map<Integer,Integer> mp=new HashMap<>();
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        for(int i=0;i<inorder.length;i++){
+            mp.put(inorder[i],i);
+        }
+        return build(preorder,pre,inorder.length-1);
+    }
+    public TreeNode build(int[] preorder,int st,int end){
+        if(st>end){
+            return null;
+        }
+        int rootval=preorder[pre++];
+        TreeNode root=new TreeNode(rootval);
+        int ind=mp.get(rootval);
+        root.left=build(preorder,st,ind-1);
+        root.right=build(preorder,ind+1,end);
+        return root;
+    }
+
+}
+##
+hard13
+class Solution {
+    List<List<Integer>> ans=new ArrayList<>();
+    List<Integer> graph[];
+    int[] disc;
+    int[] low;
+    int time;
+    public List<List<Integer>> criticalConnections(int n, List<List<Integer>> connections) {
+        graph=new ArrayList[n];
+        disc=new int[n];
+        low=new int[n];
+        Arrays.fill(disc,-1);
+        Arrays.fill(low,-1);
+        time=0;
+        for(int i=0;i<graph.length;i++){
+            graph[i]=new ArrayList<>();
+        }
+        for(List<Integer> con:connections){
+            int s=con.get(0);
+            int d=con.get(1);
+            graph[s].add(d);
+            graph[d].add(s);
+        }
+        func(0,-1);
+        return ans;
+    }
+    public void func(int u, int parent){
+        disc[u]=time;
+        low[u]=time;
+        time++;
+        for(int v:graph[u]){
+            if(v==parent){
+                continue;
+            }
+            if(disc[v]==-1){
+                func(v,u);
+                low[u]=Math.min(low[u],low[v]);
+                if(low[v]>disc[u]){
+                    ans.add(Arrays.asList(u,v));
+                }
+            }
+            else{
+                low[u]=Math.min(low[u],low[v]);
+            }
+        }
+    }
+}
+##
 summa
 
 venna
