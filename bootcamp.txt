@@ -1522,19 +1522,36 @@ public class Codec {
 
 ##
 easy13
-def islandPerimeter(grid):
-    rows, cols = len(grid), len(grid[0])
-    perimeter = 0
+public class Solution {
+    public int islandPerimeter(int[][] grid) {
+        int perimeter = 0;
+        int rows = grid.length;
+        int cols = grid[0].length;
 
-    for i in range(rows):
-        for j in range(cols):
-            if grid[i][j] == 1:
-                perimeter += 4
-                if i > 0 and grid[i - 1][j] == 1:  # check top neighbor
-                    perimeter -= 2
-                if j > 0 and grid[i][j - 1] == 1:  # check left neighbor
-                    perimeter -= 2
-    return perimeter
+        // Traverse each cell in the grid
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                // Check if the current cell is land
+                if (grid[i][j] == 1) {
+                    perimeter += 4;
+
+                    // If the top neighbor is also land, subtract 2 (shared edge)
+                    if (i > 0 && grid[i - 1][j] == 1) {
+                        perimeter -= 2;
+                    }
+
+                    // If the left neighbor is also land, subtract 2 (shared edge)
+                    if (j > 0 && grid[i][j - 1] == 1) {
+                        perimeter -= 2;
+                    }
+                }
+            }
+        }
+
+        return perimeter;
+    }
+}
+
 ##
 mid13
 class Solution {
@@ -1608,6 +1625,185 @@ class Solution {
     }
 }
 ##
+easy14
+import java.util.Scanner;
+
+public class Solution {
+    public int addDigits(int num) {
+        ///ADD YOUR CODE HERE
+        while(num>9){
+            int sum=0;
+            while(num!=0){
+                sum+=num%10;
+                num/=10;
+            }
+            num=sum;
+        }
+        return num;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int num = scanner.nextInt();
+
+        Solution solution = new Solution();
+        int result = solution.addDigits(num);
+
+        System.out.println(result);
+    }
+}
+##
+easy15
+import java.util.Scanner;
+
+public class Solution {
+    public boolean isUgly(int n) {
+        //Type Your code here
+        while(n%2==0){
+            n/=2;
+        }
+        while(n%3==0){
+            n/=3;
+        }
+        while(n%5==0){
+            n/=5;
+        }
+        return n==1;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        Scanner scanner = new Scanner(System.in);
+
+        //System.out.print("Enter a number: ");
+        if (scanner.hasNextInt()) {
+            int n = scanner.nextInt();
+            boolean result = solution.isUgly(n);
+            System.out.println(result);
+        }
+        scanner.close();
+    }
+}
+##
+easy16
+import java.util.Scanner;
+
+public class Solution {
+    public boolean isPalindrome(int x) {
+        if(x<0) return false;
+        int y=x;
+        int sum=0;
+        while(y!=0){
+            sum=sum*10+y%10;
+            y/=10;
+        }
+        return sum==x;
+        // Type your code here
+        
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        //System.out.print("Enter an integer: ");
+        int number = scanner.nextInt();
+
+        Solution solution = new Solution();
+        if (solution.isPalindrome(number)) {
+            System.out.println(number + " is a palindrome.");
+        } else {
+            System.out.println(number + " is not a palindrome.");
+        }
+
+        scanner.close();
+    }import java.util.Scanner;
+
+public class Solution {
+
+    public boolean threeConsecutiveOdds(int[] nums)
+    {
+        for(int i=0;i<nums.length-2;i++){
+            if(nums[i]%2!=0 && nums[i+1]%2!=0 && nums[i+2]%2!=0){
+                return true;
+            }
+        }
+        return false;
+        // Type Your Code Here 
+        
+        
+        
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Solution sol = new Solution();
+
+        int n = scanner.nextInt();
+
+        int[] arr = new int[n];
+        
+        for (int i = 0; i < n; i++) {
+            arr[i] = scanner.nextInt();
+        }
+
+        boolean result = sol.threeConsecutiveOdds(arr);
+        System.out.println(result);
+
+        scanner.close();
+    }
+}
+##
+easy18
+import java.util.Scanner;
+class GuessGame {
+    int pick;
+    public GuessGame(int pick) {
+        this.pick = pick;
+    }
+
+    public int guess(int num) {
+        if (num == pick) return 0;
+        else if (num > pick) return -1;
+        else return 1;
+    }
+}
+
+public class Solution extends GuessGame {
+
+    public Solution(int pick) {
+        super(pick);
+    }
+
+    public int guessNumber(int n) 
+    {
+        int left =0;
+        int right=n;
+        while(left<right){
+            int mid = (right+left)/2;
+            
+            if(mid==pick) return pick;
+            else if(mid>pick) left=mid+1;
+            else right=mid-1;
+        }
+        return pick;
+     // Type Your Code Here 
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        int pick = scanner.nextInt();
+        Solution solution = new Solution(pick);
+        int result = solution.guessNumber(n);
+        System.out.println( result);
+        scanner.close();
+    }
+}
+##
+
+}
+##
+easy17
+
 summa
 
 venna
