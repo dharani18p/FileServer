@@ -1578,51 +1578,60 @@ class Solution {
 }
 ##
 hard13
-class Solution {
-    List<List<Integer>> ans=new ArrayList<>();
-    List<Integer> graph[];
-    int[] disc;
-    int[] low;
-    int time;
+import java.util.*;
+    class Solution {
+    int[] disc, low;
+    int time = 1;
+    List<List<Integer>> ans = new ArrayList<>();
+    Map<Integer,List<Integer>> edgeMap = new HashMap<>();
     public List<List<Integer>> criticalConnections(int n, List<List<Integer>> connections) {
-        graph=new ArrayList[n];
-        disc=new int[n];
-        low=new int[n];
-        Arrays.fill(disc,-1);
-        Arrays.fill(low,-1);
-        time=0;
-        for(int i=0;i<graph.length;i++){
-            graph[i]=new ArrayList<>();
+        disc = new int[n];
+        low = new int[n];
+        for (int i = 0; i < n; i++)
+            edgeMap.put(i, new ArrayList<Integer>());
+        for (List<Integer> conn : connections) {
+            edgeMap.get(conn.get(0)).add(conn.get(1));
+            edgeMap.get(conn.get(1)).add(conn.get(0));
         }
-        for(List<Integer> con:connections){
-            int s=con.get(0);
-            int d=con.get(1);
-            graph[s].add(d);
-            graph[d].add(s);
-        }
-        func(0,-1);
+        dfs(0, -1);
         return ans;
     }
-    public void func(int u, int parent){
-        disc[u]=time;
-        low[u]=time;
-        time++;
-        for(int v:graph[u]){
-            if(v==parent){
-                continue;
-            }
-            if(disc[v]==-1){
-                func(v,u);
-                low[u]=Math.min(low[u],low[v]);
-                if(low[v]>disc[u]){
-                    ans.add(Arrays.asList(u,v));
-                }
-            }
-            else{
-                low[u]=Math.min(low[u],low[v]);
-            }
-        }
-    }
+    public void dfs(int curr, int prev) {
+        disc[curr] = low[curr] = time++;
+        for (int next : edgeMap.get(curr)) {
+            if (disc[next] == 0) {
+                dfs(next, curr);
+                low[curr] = Math.min(low[curr], low[next]);
+            } else if (next != prev)
+                low[curr] = Math.min(low[curr], disc[next]);
+            if (low[next] > disc[curr]) 
+                ans.add(Arrays.asList(curr, next));
+        }
+ 
+    }
+    }
+    public class prog{
+    
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Solution sol = new Solution();
+
+        int n = sc.nextInt(); // Number of nodes
+        int m = sc.nextInt(); // Number of connections
+
+        List<List<Integer>> connections = new ArrayList<>();
+
+        for (int i = 0; i < m; i++) {
+            int u = sc.nextInt();
+            int v = sc.nextInt();
+            connections.add(Arrays.asList(u, v));
+        }
+
+        List<List<Integer>> result = sol.criticalConnections(n, connections);
+        for (List<Integer> edge : result) {
+            System.out.println(edge.get(0) + " " + edge.get(1));
+        }
+    }
 }
 ##
 easy14
@@ -1653,6 +1662,102 @@ public class Solution {
     }
 }
 ##
+mid14
+import java.util.Scanner;
+
+// Main class with logic and main method
+public class Solution {
+
+    // Static nested class for ListNode
+    static class ListNode {
+        int val;
+        ListNode next;
+        ListNode(int x) {
+            val = x;
+            next = null;
+        }
+    }
+
+    // Function to swap pairs
+    public ListNode swapPairs(ListNode head) { 
+        
+        // Type your code here
+
+
+        ListNode dummy = new ListNode(0);
+        ListNode prev = dummy;
+        dummy.next = head;
+
+        while (head != null && head.next != null) {
+            ListNode first = head;
+            ListNode second = head.next;
+
+            prev.next = second;
+            first.next = second.next;
+            second.next = first;
+
+            prev = first;
+            head = first.next;
+        }
+        return dummy.next;
+ 
+        
+    }
+
+    // Create linked list from array
+    public ListNode createList(int[] values) {
+        if (values.length == 0) return null;
+
+        ListNode head = new ListNode(values[0]);
+        ListNode current = head;
+
+        for (int i = 1; i < values.length; i++) {
+            current.next = new ListNode(values[i]);
+            current = current.next;
+        }
+
+        return head;
+    }
+
+    // Convert linked list to string in array format
+    public String listToString(ListNode head) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        ListNode current = head;
+        while (current != null) {
+            sb.append(current.val);
+            if (current.next != null) sb.append(",");
+            current = current.next;
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+    // Main method
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Solution solution = new Solution();
+
+        //System.out.print("Enter number of elements in the list: ");
+        int n = scanner.nextInt();
+
+        int[] values = new int[n];
+        //System.out.print("Enter the elements: ");
+        for (int i = 0; i < n; i++) {
+            values[i] = scanner.nextInt();
+        }
+
+        ListNode head = solution.createList(values);
+        //System.out.println("Input: head = " + solution.listToString(head));
+
+        ListNode swapped = solution.swapPairs(head);
+        //System.out.println("Output: " + solution.listToString(swapped));
+       System.out.println(solution.listToString(swapped));
+        scanner.close();
+    }
+}
+##
+
 easy15
 import java.util.Scanner;
 
@@ -1715,7 +1820,10 @@ public class Solution {
         }
 
         scanner.close();
-    }import java.util.Scanner;
+    }
+##
+easy17
+import java.util.Scanner;
 
 public class Solution {
 
@@ -1802,8 +1910,6 @@ public class Solution extends GuessGame {
 
 }
 ##
-easy17
-
 summa
 
 venna
