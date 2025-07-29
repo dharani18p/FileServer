@@ -1579,39 +1579,55 @@ class Solution {
 ##
 hard13
 import java.util.*;
-    class Solution {
-    int[] disc, low;
-    int time = 1;
-    List<List<Integer>> ans = new ArrayList<>();
-    Map<Integer,List<Integer>> edgeMap = new HashMap<>();
+
+public class Solution {
+    List<Integer>[] g;
+    int[] disc;
+    int[] low;
+    int time;
+    List<List<Integer>> res;
+
+    @SuppressWarnings("unchecked")
     public List<List<Integer>> criticalConnections(int n, List<List<Integer>> connections) {
+        g = new ArrayList[n];
         disc = new int[n];
         low = new int[n];
-        for (int i = 0; i < n; i++)
-            edgeMap.put(i, new ArrayList<Integer>());
-        for (List<Integer> conn : connections) {
-            edgeMap.get(conn.get(0)).add(conn.get(1));
-            edgeMap.get(conn.get(1)).add(conn.get(0));
+        Arrays.fill(disc, -1);
+        Arrays.fill(low, -1);
+        time = 0;
+        res = new ArrayList<>();
+
+        for (int i = 0; i < n; i++) {
+            g[i] = new ArrayList<>();
         }
+
+        for (List<Integer> con : connections) {
+            int u = con.get(0);
+            int v = con.get(1);
+            g[u].add(v);
+            g[v].add(u);
+        }
+
         dfs(0, -1);
-        return ans;
+        return res;
     }
-    public void dfs(int curr, int prev) {
-        disc[curr] = low[curr] = time++;
-        for (int next : edgeMap.get(curr)) {
-            if (disc[next] == 0) {
-                dfs(next, curr);
-                low[curr] = Math.min(low[curr], low[next]);
-            } else if (next != prev)
-                low[curr] = Math.min(low[curr], disc[next]);
-            if (low[next] > disc[curr]) 
-                ans.add(Arrays.asList(curr, next));
+
+    public void dfs(int u, int parent) {
+        disc[u] = low[u] = time++;
+        for (int v : g[u]) {
+            if (v == parent) continue;
+            if (disc[v] == -1) {
+                dfs(v, u);
+                low[u] = Math.min(low[u], low[v]);
+                if (low[v] > disc[u]) {
+                    res.add(Arrays.asList(u, v));
+                }
+            } else {
+                low[u] = Math.min(low[u], disc[v]);
+            }
         }
- 
     }
-    }
-    public class prog{
-    
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         Solution sol = new Solution();
@@ -1620,7 +1636,6 @@ import java.util.*;
         int m = sc.nextInt(); // Number of connections
 
         List<List<Integer>> connections = new ArrayList<>();
-
         for (int i = 0; i < m; i++) {
             int u = sc.nextInt();
             int v = sc.nextInt();
@@ -1631,8 +1646,11 @@ import java.util.*;
         for (List<Integer> edge : result) {
             System.out.println(edge.get(0) + " " + edge.get(1));
         }
+
+        sc.close();
     }
 }
+
 ##
 easy14
 import java.util.Scanner;
@@ -1754,6 +1772,175 @@ public class Solution {
         //System.out.println("Output: " + solution.listToString(swapped));
        System.out.println(solution.listToString(swapped));
         scanner.close();
+    }
+}
+##
+hard14-opt1
+class Solution {
+    public int magnificentSets(int n, int[][] edges) {
+        // ArrayList[n+1]
+        // degree[n+1]
+        // component[]
+        // result[max grp][low degree]
+        // level[]
+        List<Integer> graph[]=new ArrayList[n+1];
+        for(int i=0;i<=n;i++){
+            graph[i]=new ArrayList<>();
+        }
+        int degree[]=new int[n+1];
+        for(int edge[]:edges){
+            int s=edge[0];
+            int d=edge[1];
+            graph[s].add(d);
+            graph[d].add(s);
+            degree[s]++;
+            degree[d]++;
+        }
+        int comp[]=new int[n+1];
+        int res[][]=new int[n+1][2];
+        int component=1;
+        for(int i=1;i<=n;i++){
+            if(comp[i]!=0 && res[comp[i]][1]<degree[i]) continue;
+            if(comp[i]==0){
+                comp[i]=component++;
+            }
+            res[comp[i]][1]=degree[i];
+            Queue<Integer> q=new LinkedList<>();
+            q.offer(i);
+            int level[]=new int[n+1];
+            level[i]=1;
+            int h=0;
+            while(!q.isEmpty()){
+                int size=q.size();
+                for(int j=0;j<size;j++){
+                    int parent=q.poll();
+                    comp[parent]=comp[i];
+                    h=Math.max(h,level[parent]);
+                    for(int child:graph[parent]){
+                        if(level[child]==0){
+                            level[child]=level[parent]+1;
+                            q.offer(child);
+                        }
+                        else if(Math.abs(level[parent]-level[child])!=1){
+                            return -1;
+                        }
+                    }
+                }
+            }
+            res[comp[i]][0]=Math.max(res[comp[i]][0],h);
+        }
+        int ans=0;
+        for(int arr[]:res){
+            ans+=arr[0];
+        }
+        return ans;
+    }
+}
+##
+hard14-opt2
+import java.util.*;
+
+class Solution {
+    public int magnificentSets(int n, int[][] edges) {
+        List<Integer>[] graph = new ArrayList[n + 1];
+        for (int i = 0; i <= n; i++) graph[i] = new ArrayList<>();
+
+        for (int[] e : edges) {
+            graph[e[0]].add(e[1]);
+            graph[e[1]].add(e[0]);
+        }
+
+        // Union-Find to group connected components
+        int[] parent = new int[n + 1];
+        for (int i = 1; i <= n; i++) parent[i] = i;
+
+        for (int[] e : edges) {
+            union(parent, e[0], e[1]);
+        }
+
+        // Check if the graph is bipartite
+        int[] color = new int[n + 1];
+        Arrays.fill(color, -1);
+        for (int i = 1; i <= n; i++) {
+            if (color[i] == -1 && !isBipartite(graph, color, i)) {
+                return -1; // Not bipartite → impossible
+            }
+        }
+
+        // Group nodes by components
+        Map<Integer, List<Integer>> components = new HashMap<>();
+        for (int i = 1; i <= n; i++) {
+            int root = find(parent, i);
+            components.computeIfAbsent(root, k -> new ArrayList<>()).add(i);
+        }
+
+        int result = 0;
+        for (List<Integer> component : components.values()) {
+            int maxDepth = 0;
+            for (int node : component) {
+                maxDepth = Math.max(maxDepth, bfsDepth(graph, node, n));
+            }
+            result += maxDepth;
+        }
+
+        return result;
+    }
+
+    // BFS to find the maximum number of levels (max group size starting from node)
+    private int bfsDepth(List<Integer>[] graph, int start, int n) {
+        boolean[] visited = new boolean[n + 1];
+        Queue<Integer> queue = new LinkedList<>();
+        queue.offer(start);
+        visited[start] = true;
+
+        int level = 0;
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            level++;
+            for (int i = 0; i < size; i++) {
+                int node = queue.poll();
+                for (int neighbor : graph[node]) {
+                    if (!visited[neighbor]) {
+                        visited[neighbor] = true;
+                        queue.offer(neighbor);
+                    }
+                }
+            }
+        }
+
+        return level;
+    }
+
+    // Check if graph is bipartite using BFS
+    private boolean isBipartite(List<Integer>[] graph, int[] color, int start) {
+        Queue<Integer> queue = new LinkedList<>();
+        queue.offer(start);
+        color[start] = 0;
+
+        while (!queue.isEmpty()) {
+            int u = queue.poll();
+            for (int v : graph[u]) {
+                if (color[v] == -1) {
+                    color[v] = color[u] ^ 1;
+                    queue.offer(v);
+                } else if (color[v] == color[u]) {
+                    return false; // Not bipartite
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private int find(int[] parent, int u) {
+        if (parent[u] != u) {
+            parent[u] = find(parent, parent[u]);
+        }
+        return parent[u];
+    }
+
+    private void union(int[] parent, int u, int v) {
+        parent[find(parent, u)] = find(parent, v);
     }
 }
 ##
@@ -1900,6 +2087,51 @@ public class Main {
     }
 }
 ##
+hard15
+import java.util.*;
+
+class Solution {
+    public int findShortestCycle(int n, int[][] edges) {
+        List<Integer>[] graph = new ArrayList[n];
+        for(int i = 0; i < n; i++) graph[i] = new ArrayList<>();
+        for(int[] edge : edges){
+            graph[edge[0]].add(edge[1]);
+            graph[edge[1]].add(edge[0]);
+        }
+
+        int minCycle = Integer.MAX_VALUE;
+
+        for(int start = 0; start < n; start++) {
+            int[] dist = new int[n];
+            Arrays.fill(dist, -1);
+            int[] parent = new int[n];
+            Arrays.fill(parent, -1);
+
+            Queue<Integer> queue = new LinkedList<>();
+            queue.offer(start);
+            dist[start] = 0;
+
+            while(!queue.isEmpty()) {
+                int node = queue.poll();
+                for(int neighbor : graph[node]) {
+                    if(dist[neighbor] == -1) {
+                        dist[neighbor] = dist[node] + 1;
+                        parent[neighbor] = node;
+                        queue.offer(neighbor);
+                    } else if (parent[node] != neighbor) {
+                        // Found a cycle
+                        int cycleLength = dist[node] + dist[neighbor] + 1;
+                        minCycle = Math.min(minCycle, cycleLength);
+                    }
+                }
+            }
+        }
+
+        return minCycle == Integer.MAX_VALUE ? -1 : minCycle;
+    }
+}
+##
+
 
 easy16
 import java.util.Scanner;
@@ -1934,110 +2166,98 @@ public class Solution {
     }
 ##
 mid16
-import java.util.*;
 
-// Definition for singly-linked list
-class ListNode {
-    int val;
-    ListNode next;
-    ListNode() {}
-    ListNode(int val) { this.val = val; }
-    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
-}
 
-// Definition for a binary tree node
-class TreeNode {
-    int val;
-    TreeNode left, right;
-    TreeNode() {}
-    TreeNode(int val) { this.val = val; }
-    TreeNode(int val, TreeNode left, TreeNode right) {
-        this.val = val;
-        this.left = left;
-        this.right = right;
-    }
-}
+import java.util.HashMap;
+import java.util.Scanner;
 
-class Solution {
-    TreeNode DFS(List<Integer> li, int st, int end){
-        if(st>end){
-            return null;
-        }
-        int mid=(st+end)/2;
-        TreeNode root=new TreeNode(li.get(mid));
-        root.left=DFS(li,st,mid-1);
-        root.right=DFS(li,mid+1,end);
-        return root;
-    }
-    public TreeNode sortedListToBST(ListNode head) {
-        List<Integer> li=new ArrayList<>();
-        while(head!=null){
-            li.add(head.val);
-            head=head.next;
-        }
-        //Type Your Code Here
-        return DFS(li,0,li.size()-1);
-    }
-        
-    
-    public List<String> levelOrderWithNulls(TreeNode root) {
-        List<String> result = new ArrayList<>();
-        if (root == null) return result;
+public class Solution {
+    public int subarraySum(int[] nums, int k) {
+        int count = 0;
+        int sum = 0;
 
-        Queue<TreeNode> queue = new LinkedList<>();
-        queue.offer(root);
+        HashMap<Integer, Integer> prefixSumFreq = new HashMap<>();
+        prefixSumFreq.put(0, 1); // Initialize for sum = k at the beginning
 
-        while (!queue.isEmpty()) {
-            TreeNode node = queue.poll();
-            if (node == null) {
-                result.add("null");
-            } else {
-                result.add(String.valueOf(node.val));
-                queue.offer(node.left);
-                queue.offer(node.right);
+        for (int num : nums) {
+            sum += num;
+
+            if (prefixSumFreq.containsKey(sum - k)) {
+                count += prefixSumFreq.get(sum - k);
             }
+
+            prefixSumFreq.put(sum, prefixSumFreq.getOrDefault(sum, 0) + 1);
         }
 
-        
-        int i = result.size() - 1;
-        while (i >= 0 && result.get(i).equals("null")) {
-            result.remove(i);
-            i--;
-        }
-
-        return result;
+        return count;
     }
-}
 
-// Main class
-public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        Solution solution = new Solution();
 
-        //System.out.println("Input (e.g., [-10,-3,0,5,9]):");
-        String input = scanner.nextLine().trim();
+        int n = scanner.nextInt();
+        int[] nums = new int[n];
 
-        input = input.replaceAll("[\\[\\]\\s]", "");
-        String[] parts = input.split(",");
-
-        // Build linked list
-        ListNode dummy = new ListNode(0);
-        ListNode current = dummy;
-        for (String part : parts) {
-            if (!part.isEmpty()) {
-                current.next = new ListNode(Integer.parseInt(part));
-                current = current.next;
-            }
+        for (int i = 0; i < n; i++) {
+            nums[i] = scanner.nextInt();
         }
 
-        TreeNode root = solution.sortedListToBST(dummy.next);
-        List<String> output = solution.levelOrderWithNulls(root);
+        int k = scanner.nextInt();
 
-        //System.out.println("Output:");
-        System.out.println(output);
+        Solution solution = new Solution();
+        int result = solution.subarraySum(nums, k);
+        System.out.println(result);
 
         scanner.close();
+    }
+}
+
+##
+hard16
+class Solution {
+    public List<List<Integer>> palindromePairs(String[] words) {
+        List<List<Integer>> res=new ArrayList<>();
+        Map<String,Integer> mp=new HashMap<>();
+        TreeSet<Integer> ts=new TreeSet<>();
+        for(int i=0;i<words.length;i++){
+            mp.put(words[i],i);
+            ts.add(words[i].length());
+        }
+        for(int i=0;i<words.length;i++){
+            String curr=words[i];
+            int len=words[i].length();
+            String rev=new StringBuilder(curr).reverse().toString();
+ 
+            if(mp.containsKey(rev) && mp.get(rev)!=i){
+                res.add(List.of(i,mp.get(rev)));
+            }
+            for(int k:ts){
+                if(k==len){
+                    break;
+                }
+                if(isPalindrome(rev,0,len-1-k)){
+                    String suf=rev.substring(len-k);
+                    if(mp.containsKey(suf)){
+                        res.add(List.of(i,mp.get(suf)));
+                    }
+                }
+                if(isPalindrome(rev,k,len-1)){
+                    String pre=rev.substring(0,k);
+                    if(mp.containsKey(pre)){
+                        res.add(List.of(mp.get(pre),i));
+                    }
+                }
+            }
+        }
+        return res;
+    }
+    public boolean isPalindrome(String data,int left,int right){
+        while(left<right){
+            if(data.charAt(left++)!=data.charAt(right--)){
+                return false;
+            }
+        }
+        return true;
     }
 }
 ##
@@ -2077,6 +2297,41 @@ public class Solution {
         System.out.println(result);
 
         scanner.close();
+    }
+}
+##
+mid17
+import java.util.*;
+
+public class Solution {
+
+    private final static int MAX = 1_000_000_000;
+
+    public int networkDelayTime(int[][] times, int n, int k) {
+        //TYPE YOUR CODE HERE...
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Solution sol = new Solution();
+
+        // Read number of edges
+        int m = scanner.nextInt();
+        int[][] times = new int[m][3];
+
+        // Read edges
+        for (int i = 0; i < m; i++) {
+            times[i][0] = scanner.nextInt();
+            times[i][1] = scanner.nextInt();
+            times[i][2] = scanner.nextInt();
+        }
+
+        // Read number of nodes and starting node
+        int n = scanner.nextInt();
+        int k = scanner.nextInt();
+
+        int result = sol.networkDelayTime(times, n, k);
+        System.out.println(result);
     }
 }
 ##
@@ -2127,6 +2382,48 @@ public class Solution extends GuessGame {
     }
 }
 ##
+hard17
+class Solution {
+    int[][] directions = {{0,1}, {1,0}, {0,-1}, {-1,0}};
+    int m, n;
+
+    public int longestIncreasingPath(int[][] matrix) {
+        m = matrix.length;
+        n = matrix[0].length;
+        int[][] dp = new int[m][n];
+        int maxLen = 0;
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                maxLen = Math.max(maxLen, dfs(matrix, i, j, dp));
+            }
+        }
+        return maxLen;
+    }
+
+    private int dfs(int[][] matrix, int row, int col, int[][] dp) {
+        if (dp[row][col] != 0) return dp[row][col];
+
+        int max = 1;
+        for (int[] dir : directions) {
+            int newRow = row + dir[0];
+            int newCol = col + dir[1];
+
+            if (newRow >= 0 && newRow < m && newCol >= 0 && newCol < n &&
+                matrix[newRow][newCol] > matrix[row][col]) {
+                int len = 1 + dfs(matrix, newRow, newCol, dp);
+                max = Math.max(max, len);
+            }
+        }
+
+        dp[row][col] = max;
+        return max;
+    }
+}
+
+
+
+##
 mid18
 import java.util.*;
 
@@ -2169,7 +2466,35 @@ public class Solution {
             int m = scanner.nextInt(); // number of neighbors
             graph[i] = new int[m];
             for (int j = 0; j < m; j++) {
-                graph[i][j] = scanner.nextInt();
+                graph[i][j] = scanner.nextInt();class Solution {
+    public boolean isBipartite(int[][] graph) {
+        int n = graph.length;
+        int[] color = new int[n];
+        Arrays.fill(color, -1); // -1 means uncolored
+
+        for (int i = 0; i < n; i++) {
+            if (color[i] == -1) { // not yet visited
+                Queue<Integer> queue = new LinkedList<>();
+                queue.offer(i);
+                color[i] = 0; // start coloring with 0
+
+                while (!queue.isEmpty()) {
+                    int curr = queue.poll();
+                    for (int neighbor : graph[curr]) {
+                        if (color[neighbor] == -1) {
+                            color[neighbor] = 1 - color[curr]; // alternate color
+                            queue.offer(neighbor);
+                        } else if (color[neighbor] == color[curr]) {
+                            return false; // adjacent nodes have same color
+                        }
+                    }
+                }
+            }
+        }
+        return true; // successfully colored
+    }
+}
+
             }
         }
 
@@ -2183,6 +2508,11 @@ public class Solution {
 
 }
 ##
+hard18
+
+
+##
+
 summa
 
 venna
