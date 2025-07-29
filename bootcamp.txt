@@ -2481,7 +2481,6 @@ public class Solution {
 }
 ##
 hard18
-
 class Solution {
     public boolean isBipartite(int[][] graph) {
         int n = graph.length;
@@ -2510,13 +2509,12 @@ class Solution {
         return true; // successfully colored
     }
 }
-
 ##
 
 summa
 
 venna
-
+##
 
 
 
