@@ -2466,7 +2466,23 @@ public class Solution {
             int m = scanner.nextInt(); // number of neighbors
             graph[i] = new int[m];
             for (int j = 0; j < m; j++) {
-                graph[i][j] = scanner.nextInt();class Solution {
+                graph[i][j] = scanner.nextInt();
+            }
+        }
+
+        boolean result = sol.isBipartite(graph);
+        System.out.println(result);
+
+        scanner.close();
+    }
+}
+
+
+}
+##
+hard18
+
+class Solution {
     public boolean isBipartite(int[][] graph) {
         int n = graph.length;
         int[] color = new int[n];
@@ -2494,22 +2510,6 @@ public class Solution {
         return true; // successfully colored
     }
 }
-
-            }
-        }
-
-        boolean result = sol.isBipartite(graph);
-        System.out.println(result);
-
-        scanner.close();
-    }
-}
-
-
-}
-##
-hard18
-
 
 ##
 
