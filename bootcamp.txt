@@ -1790,6 +1790,117 @@ public class Solution {
     }
 }
 ##
+mid15
+import java.util.*;
+
+// Definition for singly-linked list
+class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+
+// Definition for a binary tree node
+class TreeNode {
+    int val;
+    TreeNode left, right;
+    TreeNode() {}
+    TreeNode(int val) { this.val = val; }
+    TreeNode(int val, TreeNode left, TreeNode right) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+}
+
+class Solution {
+    TreeNode DFS(List<Integer> li, int st, int end){
+        if(st>end){
+            return null;
+        }
+        int mid=(st+end)/2;
+        TreeNode root=new TreeNode(li.get(mid));
+        root.left=DFS(li,st,mid-1);
+        root.right=DFS(li,mid+1,end);
+        return root;
+    }
+    public TreeNode sortedListToBST(ListNode head) {
+        
+        //Type Your Code Here
+        List<Integer> li = new ArrayList<>();
+        while(head!=null){
+            li.add(head.val);
+            head=head.next;
+        }
+        return DFS(li,0,li.size()-1);
+        
+    }
+        
+    
+    public List<String> levelOrderWithNulls(TreeNode root) {
+        List<String> result = new ArrayList<>();
+        if (root == null) return result;
+
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            if (node == null) {
+                result.add("null");
+            } else {
+                result.add(String.valueOf(node.val));
+                queue.offer(node.left);
+                queue.offer(node.right);
+            }
+        }
+
+        
+        int i = result.size() - 1;
+        while (i >= 0 && result.get(i).equals("null")) {
+            result.remove(i);
+            i--;
+        }
+
+        return result;
+    }
+}
+
+// Main class
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Solution solution = new Solution();
+
+        //System.out.println("Input (e.g., [-10,-3,0,5,9]):");
+        String input = scanner.nextLine().trim();
+
+        input = input.replaceAll("[\\[\\]\\s]", "");
+        String[] parts = input.split(",");
+
+        // Build linked list
+        ListNode dummy = new ListNode(0);
+        ListNode current = dummy;
+        for (String part : parts) {
+            if (!part.isEmpty()) {
+                current.next = new ListNode(Integer.parseInt(part));
+                current = current.next;
+            }
+        }
+
+        TreeNode root = solution.sortedListToBST(dummy.next);
+        List<String> output = solution.levelOrderWithNulls(root);
+
+        //System.out.println("Output:");
+        System.out.println(output);
+
+        scanner.close();
+    }
+}
+##
+
 easy16
 import java.util.Scanner;
 
@@ -1822,6 +1933,115 @@ public class Solution {
         scanner.close();
     }
 ##
+mid16
+import java.util.*;
+
+// Definition for singly-linked list
+class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+
+// Definition for a binary tree node
+class TreeNode {
+    int val;
+    TreeNode left, right;
+    TreeNode() {}
+    TreeNode(int val) { this.val = val; }
+    TreeNode(int val, TreeNode left, TreeNode right) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+}
+
+class Solution {
+    TreeNode DFS(List<Integer> li, int st, int end){
+        if(st>end){
+            return null;
+        }
+        int mid=(st+end)/2;
+        TreeNode root=new TreeNode(li.get(mid));
+        root.left=DFS(li,st,mid-1);
+        root.right=DFS(li,mid+1,end);
+        return root;
+    }
+    public TreeNode sortedListToBST(ListNode head) {
+        List<Integer> li=new ArrayList<>();
+        while(head!=null){
+            li.add(head.val);
+            head=head.next;
+        }
+        //Type Your Code Here
+        return DFS(li,0,li.size()-1);
+    }
+        
+    
+    public List<String> levelOrderWithNulls(TreeNode root) {
+        List<String> result = new ArrayList<>();
+        if (root == null) return result;
+
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            if (node == null) {
+                result.add("null");
+            } else {
+                result.add(String.valueOf(node.val));
+                queue.offer(node.left);
+                queue.offer(node.right);
+            }
+        }
+
+        
+        int i = result.size() - 1;
+        while (i >= 0 && result.get(i).equals("null")) {
+            result.remove(i);
+            i--;
+        }
+
+        return result;
+    }
+}
+
+// Main class
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Solution solution = new Solution();
+
+        //System.out.println("Input (e.g., [-10,-3,0,5,9]):");
+        String input = scanner.nextLine().trim();
+
+        input = input.replaceAll("[\\[\\]\\s]", "");
+        String[] parts = input.split(",");
+
+        // Build linked list
+        ListNode dummy = new ListNode(0);
+        ListNode current = dummy;
+        for (String part : parts) {
+            if (!part.isEmpty()) {
+                current.next = new ListNode(Integer.parseInt(part));
+                current = current.next;
+            }
+        }
+
+        TreeNode root = solution.sortedListToBST(dummy.next);
+        List<String> output = solution.levelOrderWithNulls(root);
+
+        //System.out.println("Output:");
+        System.out.println(output);
+
+        scanner.close();
+    }
+}
+##
+
 easy17
 import java.util.Scanner;
 
@@ -1907,6 +2127,59 @@ public class Solution extends GuessGame {
     }
 }
 ##
+mid18
+import java.util.*;
+
+public class Solution {
+
+    public boolean isBipartite(int[][] graph) 
+    {
+       int color[] = new int[graph.length];
+       Arrays.fill(color,-1);
+       for(int i=0;i<graph.length;i++){
+           if(color[i]==-1){
+               if(DFS(i,0, color, graph)==false){
+                   return false;
+               }
+           }
+       }
+       return true;
+    }
+    boolean DFS(int node,int col, int[] color, int[][] graph){
+        color[node]=col;
+        for(int i:graph[node]){
+            if(color[i]==col){
+                return false;
+            }
+            if(color[i]==-1){
+                if(DFS(i,1-col, color, graph)==false) return false;
+            }
+        }
+        return true;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Solution sol = new Solution();
+
+        int n = scanner.nextInt(); // number of nodes
+        int[][] graph = new int[n][];
+
+        for (int i = 0; i < n; i++) {
+            int m = scanner.nextInt(); // number of neighbors
+            graph[i] = new int[m];
+            for (int j = 0; j < m; j++) {
+                graph[i][j] = scanner.nextInt();
+            }
+        }
+
+        boolean result = sol.isBipartite(graph);
+        System.out.println(result);
+
+        scanner.close();
+    }
+}
+
 
 }
 ##
