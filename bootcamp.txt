@@ -1578,56 +1578,49 @@ class Solution {
 }
 ##
 hard13
+
 import java.util.*;
 
 public class Solution {
-    List<Integer>[] g;
-    int[] disc;
-    int[] low;
-    int time;
-    List<List<Integer>> res;
+    private List<List<Integer>> result = new ArrayList<>();
+    private List<List<Integer>> graph = new ArrayList<>();
+    private int[] discovery, low;
+    private int time = 0;
 
-    @SuppressWarnings("unchecked")
     public List<List<Integer>> criticalConnections(int n, List<List<Integer>> connections) {
-        g = new ArrayList[n];
-        disc = new int[n];
+        discovery = new int[n];
         low = new int[n];
-        Arrays.fill(disc, -1);
-        Arrays.fill(low, -1);
-        time = 0;
-        res = new ArrayList<>();
+        Arrays.fill(discovery, -1);
 
         for (int i = 0; i < n; i++) {
-            g[i] = new ArrayList<>();
+            graph.add(new ArrayList<>());
         }
 
-        for (List<Integer> con : connections) {
-            int u = con.get(0);
-            int v = con.get(1);
-            g[u].add(v);
-            g[v].add(u);
+        for (List<Integer> conn : connections) {
+            int u = conn.get(0), v = conn.get(1);
+            graph.get(u).add(v);
+            graph.get(v).add(u);
         }
 
         dfs(0, -1);
-        return res;
+        return result;
     }
 
-    public void dfs(int u, int parent) {
-        disc[u] = low[u] = time++;
-        for (int v : g[u]) {
-            if (v == parent) continue;
-            if (disc[v] == -1) {
-                dfs(v, u);
-                low[u] = Math.min(low[u], low[v]);
-                if (low[v] > disc[u]) {
-                    res.add(Arrays.asList(u, v));
+    private void dfs(int node, int parent) {
+        discovery[node] = low[node] = time++;
+        for (int neighbor : graph.get(node)) {
+            if (neighbor == parent) continue;
+            if (discovery[neighbor] == -1) {
+                dfs(neighbor, node);
+                low[node] = Math.min(low[node], low[neighbor]);
+                if (low[neighbor] > discovery[node]) {
+                    result.add(Arrays.asList(node, neighbor));
                 }
             } else {
-                low[u] = Math.min(low[u], disc[v]);
+                low[node] = Math.min(low[node], discovery[neighbor]);
             }
         }
     }
-
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         Solution sol = new Solution();
@@ -1636,6 +1629,7 @@ public class Solution {
         int m = sc.nextInt(); // Number of connections
 
         List<List<Integer>> connections = new ArrayList<>();
+
         for (int i = 0; i < m; i++) {
             int u = sc.nextInt();
             int v = sc.nextInt();
@@ -1646,10 +1640,9 @@ public class Solution {
         for (List<Integer> edge : result) {
             System.out.println(edge.get(0) + " " + edge.get(1));
         }
-
-        sc.close();
     }
 }
+
 
 ##
 easy14
@@ -1775,67 +1768,114 @@ public class Solution {
     }
 }
 ##
-hard14-opt1
-class Solution {
+hard14
+import java.util.*;
+
+public class Solution {
+
     public int magnificentSets(int n, int[][] edges) {
-        // ArrayList[n+1]
-        // degree[n+1]
-        // component[]
-        // result[max grp][low degree]
-        // level[]
-        List<Integer> graph[]=new ArrayList[n+1];
-        for(int i=0;i<=n;i++){
-            graph[i]=new ArrayList<>();
+        List<List<Integer>> graph = new ArrayList<>();
+        for (int i = 0; i <= n; i++) graph.add(new ArrayList<>());
+        for (int[] edge : edges) {
+            graph.get(edge[0]).add(edge[1]);
+            graph.get(edge[1]).add(edge[0]);
         }
-        int degree[]=new int[n+1];
-        for(int edge[]:edges){
-            int s=edge[0];
-            int d=edge[1];
-            graph[s].add(d);
-            graph[d].add(s);
-            degree[s]++;
-            degree[d]++;
+
+        int[] colors = new int[n + 1];
+        Arrays.fill(colors, -1);
+
+        // Check if bipartite
+        for (int i = 1; i <= n; i++) {
+            if (colors[i] == -1 && !isBipartite(i, graph, colors)) return -1;
         }
-        int comp[]=new int[n+1];
-        int res[][]=new int[n+1][2];
-        int component=1;
-        for(int i=1;i<=n;i++){
-            if(comp[i]!=0 && res[comp[i]][1]<degree[i]) continue;
-            if(comp[i]==0){
-                comp[i]=component++;
+
+        int res = 0;
+        boolean[] visited = new boolean[n + 1];
+
+        for (int i = 1; i <= n; i++) {
+            if (visited[i]) continue;
+            List<Integer> component = new ArrayList<>();
+            dfs(i, graph, visited, component);
+
+            int max = 0;
+            for (int node : component) {
+                max = Math.max(max, bfs(node, graph));
             }
-            res[comp[i]][1]=degree[i];
-            Queue<Integer> q=new LinkedList<>();
-            q.offer(i);
-            int level[]=new int[n+1];
-            level[i]=1;
-            int h=0;
-            while(!q.isEmpty()){
-                int size=q.size();
-                for(int j=0;j<size;j++){
-                    int parent=q.poll();
-                    comp[parent]=comp[i];
-                    h=Math.max(h,level[parent]);
-                    for(int child:graph[parent]){
-                        if(level[child]==0){
-                            level[child]=level[parent]+1;
-                            q.offer(child);
-                        }
-                        else if(Math.abs(level[parent]-level[child])!=1){
-                            return -1;
-                        }
+            res += max;
+        }
+        return res;
+    }
+
+    private boolean isBipartite(int node, List<List<Integer>> graph, int[] colors) {
+        Queue<Integer> queue = new LinkedList<>();
+        queue.offer(node);
+        colors[node] = 0;
+
+        while (!queue.isEmpty()) {
+            int curr = queue.poll();
+            for (int nei : graph.get(curr)) {
+                if (colors[nei] == -1) {
+                    colors[nei] = colors[curr] ^ 1;
+                    queue.offer(nei);
+                } else if (colors[nei] == colors[curr]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void dfs(int node, List<List<Integer>> graph, boolean[] visited, List<Integer> component) {
+        visited[node] = true;
+        component.add(node);
+        for (int nei : graph.get(node)) {
+            if (!visited[nei]) dfs(nei, graph, visited, component);
+        }
+    }
+
+    private int bfs(int start, List<List<Integer>> graph) {
+        Queue<Integer> queue = new LinkedList<>();
+        boolean[] visited = new boolean[graph.size()];
+        queue.offer(start);
+        visited[start] = true;
+
+        int depth = 0;
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            depth++;
+            for (int i = 0; i < size; i++) {
+                int node = queue.poll();
+                for (int nei : graph.get(node)) {
+                    if (!visited[nei]) {
+                        visited[nei] = true;
+                        queue.offer(nei);
                     }
                 }
             }
-            res[comp[i]][0]=Math.max(res[comp[i]][0],h);
         }
-        int ans=0;
-        for(int arr[]:res){
-            ans+=arr[0];
+        return depth;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Solution sol = new Solution();
+
+        int n = scanner.nextInt();
+        int m = scanner.nextInt();
+
+        int[][] edges = new int[m][2];
+        for (int i = 0; i < m; i++) {
+            edges[i][0] = scanner.nextInt();
+            edges[i][1] = scanner.nextInt();
         }
-        return ans;
-    }
+
+        int result = sol.magnificentSets(n, edges);
+        System.out.println(result);
+
+        scanner.close();
+    }
 }
+
 ##
 hard14-opt2
 import java.util.*;
@@ -2090,46 +2130,67 @@ public class Main {
 hard15
 import java.util.*;
 
-class Solution {
+public class Solution {
     public int findShortestCycle(int n, int[][] edges) {
-        List<Integer>[] graph = new ArrayList[n];
-        for(int i = 0; i < n; i++) graph[i] = new ArrayList<>();
-        for(int[] edge : edges){
-            graph[edge[0]].add(edge[1]);
-            graph[edge[1]].add(edge[0]);
+        List<List<Integer>> graph = new ArrayList<>();
+        for (int i = 0; i < n; i++) graph.add(new ArrayList<>());
+        for (int[] edge : edges) {
+            graph.get(edge[0]).add(edge[1]);
+            graph.get(edge[1]).add(edge[0]);
         }
 
-        int minCycle = Integer.MAX_VALUE;
+        int shortest = Integer.MAX_VALUE;
 
-        for(int start = 0; start < n; start++) {
+        for (int i = 0; i < n; i++) {
             int[] dist = new int[n];
             Arrays.fill(dist, -1);
             int[] parent = new int[n];
             Arrays.fill(parent, -1);
-
             Queue<Integer> queue = new LinkedList<>();
-            queue.offer(start);
-            dist[start] = 0;
+            queue.offer(i);
+            dist[i] = 0;
 
-            while(!queue.isEmpty()) {
+            while (!queue.isEmpty()) {
                 int node = queue.poll();
-                for(int neighbor : graph[node]) {
-                    if(dist[neighbor] == -1) {
-                        dist[neighbor] = dist[node] + 1;
-                        parent[neighbor] = node;
-                        queue.offer(neighbor);
-                    } else if (parent[node] != neighbor) {
+                for (int nei : graph.get(node)) {
+                    if (dist[nei] == -1) {
+                        dist[nei] = dist[node] + 1;
+                        parent[nei] = node;
+                        queue.offer(nei);
+                    } else if (parent[node] != nei) {
                         // Found a cycle
-                        int cycleLength = dist[node] + dist[neighbor] + 1;
-                        minCycle = Math.min(minCycle, cycleLength);
+                        shortest = Math.min(shortest, dist[node] + dist[nei] + 1);
                     }
                 }
             }
         }
 
-        return minCycle == Integer.MAX_VALUE ? -1 : minCycle;
+        return shortest == Integer.MAX_VALUE ? -1 : shortest;
+    }
+
+        
+        
+        
+        
+
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Solution sol = new Solution();
+
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+        int[][] edges = new int[m][2];
+        for (int i = 0; i < m; i++) {
+            edges[i][0] = sc.nextInt();
+            edges[i][1] = sc.nextInt();
+        }
+
+        int ans = sol.findShortestCycle(n, edges);
+        System.out.println(ans);
     }
 }
+
 ##
 
 
@@ -2214,52 +2275,58 @@ public class Solution {
 
 ##
 hard16
-class Solution {
-    public List<List<Integer>> palindromePairs(String[] words) {
-        List<List<Integer>> res=new ArrayList<>();
-        Map<String,Integer> mp=new HashMap<>();
-        TreeSet<Integer> ts=new TreeSet<>();
-        for(int i=0;i<words.length;i++){
-            mp.put(words[i],i);
-            ts.add(words[i].length());
+import java.util.*;
+
+public class prog {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = Integer.parseInt(sc.nextLine());
+        String[] words = new String[n];
+        for (int i = 0; i < n; i++) {
+            words[i] = sc.nextLine();
         }
-        for(int i=0;i<words.length;i++){
-            String curr=words[i];
-            int len=words[i].length();
-            String rev=new StringBuilder(curr).reverse().toString();
- 
-            if(mp.containsKey(rev) && mp.get(rev)!=i){
-                res.add(List.of(i,mp.get(rev)));
-            }
-            for(int k:ts){
-                if(k==len){
-                    break;
-                }
-                if(isPalindrome(rev,0,len-1-k)){
-                    String suf=rev.substring(len-k);
-                    if(mp.containsKey(suf)){
-                        res.add(List.of(i,mp.get(suf)));
-                    }
-                }
-                if(isPalindrome(rev,k,len-1)){
-                    String pre=rev.substring(0,k);
-                    if(mp.containsKey(pre)){
-                        res.add(List.of(mp.get(pre),i));
-                    }
-                }
-            }
+
+        List<List<Integer>> result = palindromePairs(words);
+        for (List<Integer> pair : result) {
+            System.out.print("[" + pair.get(0) + "," + pair.get(1) + "] ");
         }
-        return res;
+        System.out.println();
     }
-    public boolean isPalindrome(String data,int left,int right){
-        while(left<right){
-            if(data.charAt(left++)!=data.charAt(right--)){
-                return false;
+
+    public static List<List<Integer>> palindromePairs(String[] words) {
+        List<List<Integer>> ans = new ArrayList<>();
+        Map<String, Integer> map = new HashMap<>();
+
+        for (int i = 0; i < words.length; ++i)
+            map.put(new StringBuilder(words[i]).reverse().toString(), i);
+
+        for (int i = 0; i < words.length; ++i) {
+            final String word = words[i];
+            if (map.containsKey("") && map.get("") != i && isPalindrome(word))
+                ans.add(Arrays.asList(i, map.get("")));
+            for (int j = 1; j <= word.length(); ++j) {
+                final String l = word.substring(0, j);
+                final String r = word.substring(j);
+                if (map.containsKey(l) && map.get(l) != i && isPalindrome(r))
+                    ans.add(Arrays.asList(i, map.get(l)));
+                if (map.containsKey(r) && map.get(r) != i && isPalindrome(l))
+                    ans.add(Arrays.asList(map.get(r), i));
             }
         }
+
+        return ans;
+    }
+
+    private static boolean isPalindrome(final String word) {
+        int l = 0;
+        int r = word.length() - 1;
+        while (l < r)
+            if (word.charAt(l++) != word.charAt(r--))
+                return false;
         return true;
     }
 }
+
 ##
 
 easy17
@@ -2301,14 +2368,47 @@ public class Solution {
 }
 ##
 mid17
+
 import java.util.*;
 
 public class Solution {
 
-    private final static int MAX = 1_000_000_000;
-
     public int networkDelayTime(int[][] times, int n, int k) {
-        //TYPE YOUR CODE HERE...
+        List<List<int[]>> graph = new ArrayList<>();
+        
+        // Build adjacency list
+        for (int i = 0; i <= n; i++) graph.add(new ArrayList<>());
+        for (int[] time : times) {
+            graph.get(time[0]).add(new int[]{time[1], time[2]});
+        }
+
+        // Dijkstra's algorithm
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[1] - b[1]); // [node, time]
+        pq.offer(new int[]{k, 0});
+        int[] dist = new int[n + 1];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        dist[k] = 0;
+
+        while (!pq.isEmpty()) {
+            int[] curr = pq.poll();
+            int node = curr[0], time = curr[1];
+
+            for (int[] neighbor : graph.get(node)) {
+                int next = neighbor[0], edgeTime = neighbor[1];
+                if (time + edgeTime < dist[next]) {
+                    dist[next] = time + edgeTime;
+                    pq.offer(new int[]{next, dist[next]});
+                }
+            }
+        }
+
+        int max = 0;
+        for (int i = 1; i <= n; i++) {
+            if (dist[i] == Integer.MAX_VALUE) return -1;
+            max = Math.max(max, dist[i]);
+        }
+
+        return max;
     }
 
     public static void main(String[] args) {
@@ -2334,6 +2434,7 @@ public class Solution {
         System.out.println(result);
     }
 }
+
 ##
 easy18
 import java.util.Scanner;
@@ -2383,41 +2484,58 @@ public class Solution extends GuessGame {
 }
 ##
 hard17
-class Solution {
-    int[][] directions = {{0,1}, {1,0}, {0,-1}, {-1,0}};
+
+import java.util.*;
+
+public class Solution {
+   
+    int[][] dirs = {{0,1}, {1,0}, {0,-1}, {-1,0}};
     int m, n;
 
     public int longestIncreasingPath(int[][] matrix) {
+        if (matrix == null || matrix.length == 0) return 0;
         m = matrix.length;
         n = matrix[0].length;
-        int[][] dp = new int[m][n];
-        int maxLen = 0;
+        int[][] memo = new int[m][n];
+        int max = 0;
 
         for (int i = 0; i < m; i++) {
             for (int j = 0; j < n; j++) {
-                maxLen = Math.max(maxLen, dfs(matrix, i, j, dp));
+                max = Math.max(max, dfs(matrix, i, j, memo));
             }
         }
-        return maxLen;
+        return max;
     }
 
-    private int dfs(int[][] matrix, int row, int col, int[][] dp) {
-        if (dp[row][col] != 0) return dp[row][col];
+    private int dfs(int[][] matrix, int i, int j, int[][] memo) {
+        if (memo[i][j] != 0) return memo[i][j];
 
         int max = 1;
-        for (int[] dir : directions) {
-            int newRow = row + dir[0];
-            int newCol = col + dir[1];
-
-            if (newRow >= 0 && newRow < m && newCol >= 0 && newCol < n &&
-                matrix[newRow][newCol] > matrix[row][col]) {
-                int len = 1 + dfs(matrix, newRow, newCol, dp);
-                max = Math.max(max, len);
+        for (int[] dir : dirs) {
+            int x = i + dir[0];
+            int y = j + dir[1];
+            if (x >= 0 && x < m && y >= 0 && y < n && matrix[x][y] > matrix[i][j]) {
+                max = Math.max(max, 1 + dfs(matrix, x, y, memo));
             }
         }
 
-        dp[row][col] = max;
+        memo[i][j] = max;
         return max;
+    }
+
+    
+    public static void main(String[] args) 
+    {
+        Scanner sc = new Scanner(System.in);
+        int m = sc.nextInt();
+        int n = sc.nextInt();
+        int[][] matrix = new int[m][n];
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                matrix[i][j] = sc.nextInt();
+        Solution sol = new Solution();
+        System.out.println(sol.longestIncreasingPath(matrix));
+        sc.close();
     }
 }
 
@@ -2481,34 +2599,63 @@ public class Solution {
 }
 ##
 hard18
-class Solution {
-    public boolean isBipartite(int[][] graph) {
-        int n = graph.length;
-        int[] color = new int[n];
-        Arrays.fill(color, -1); // -1 means uncolored
+import java.util.*;
 
-        for (int i = 0; i < n; i++) {
-            if (color[i] == -1) { // not yet visited
-                Queue<Integer> queue = new LinkedList<>();
-                queue.offer(i);
-                color[i] = 0; // start coloring with 0
+public class Solution {
 
-                while (!queue.isEmpty()) {
-                    int curr = queue.poll();
-                    for (int neighbor : graph[curr]) {
-                        if (color[neighbor] == -1) {
-                            color[neighbor] = 1 - color[curr]; // alternate color
-                            queue.offer(neighbor);
-                        } else if (color[neighbor] == color[curr]) {
-                            return false; // adjacent nodes have same color
-                        }
-                    }
+    public int minCost(int n, int[] cuts) {
+        int c = cuts.length;
+        int[] allCuts = new int[c + 2];
+        allCuts[0] = 0;
+        allCuts[c + 1] = n;
+        Arrays.sort(cuts);
+        for (int i = 0; i < c; i++) {
+            allCuts[i + 1] = cuts[i];
+        }
+
+        int[][] dp = new int[c + 2][c + 2];
+
+        for (int len = 2; len <= c + 1; len++) {
+            for (int i = 0; i + len <= c + 1; i++) {
+                int j = i + len;
+                dp[i][j] = Integer.MAX_VALUE;
+                for (int k = i + 1; k < j; k++) {
+                    int cost = allCuts[j] - allCuts[i] + dp[i][k] + dp[k][j];
+                    dp[i][j] = Math.min(dp[i][j], cost);
                 }
             }
         }
-        return true; // successfully colored
+
+        return dp[0][c + 1];
+    }
+
+
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        try {
+            // First line: read stick length
+            int n = Integer.parseInt(scanner.nextLine().trim());
+
+            // Second line: read space-separated cuts
+            String[] parts = scanner.nextLine().trim().split("\\s+");
+            int[] cuts = new int[parts.length];
+            for (int i = 0; i < parts.length; i++) {
+                cuts[i] = Integer.parseInt(parts[i]);
+            }
+
+            Solution sol = new Solution();
+            int result = sol.minCost(n, cuts);
+            System.out.println(result);
+
+        } catch (Exception e) {
+            System.out.println("Invalid input format.");
+        } finally {
+            scanner.close();
+        }
     }
 }
+
 ##
 
 summa
