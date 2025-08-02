@@ -2657,6 +2657,310 @@ public class Solution {
 }
 
 ##
+easy20
+import java.util.*;
+
+public class Solution {
+    public int heightChecker(int[] heights) {
+        int [] expected= heights.clone();
+        Arrays.sort(expected);
+        int c=0;
+
+        for(int i=0;i<heights.length;i++)
+        {
+            if(heights[i]!=expected[i])
+            {
+                c++;
+            }
+        }
+        return c;
+
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine().trim();
+        input = input.replaceAll("\\[|\\]|\\s", "");
+        String[] parts = input.split(",");
+        int[] heights = new int[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            heights[i] = Integer.parseInt(parts[i]);
+        }
+        Solution sol = new Solution();
+        int result = sol.heightChecker(heights);
+        System.out.println(result);
+    }
+}
+##
+mid20
+import java.util.*;
+
+class prog {
+    public int orangesRotting(int[][] grid) {
+        int rows = grid.length, cols = grid[0].length;
+        Queue<int[]> queue = new LinkedList<>();
+        int fresh = 0;
+
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (grid[r][c] == 2) {
+                    queue.offer(new int[] {r, c});
+                } else if (grid[r][c] == 1) {
+                    fresh++;
+                }
+            }
+        }
+
+        if (fresh == 0) return 0; 
+
+        int minutes = 0;
+        int[][] directions = {{1,0}, {-1,0}, {0,1}, {0,-1}};
+
+        
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            boolean rotted = false;
+
+            for (int i = 0; i < size; i++) {
+                int[] orange = queue.poll();
+                int r = orange[0], c = orange[1];
+
+                for (int[] dir : directions) {
+                    int nr = r + dir[0], nc = c + dir[1];
+                    if (nr >= 0 && nc >= 0 && nr < rows && nc < cols && grid[nr][nc] == 1) {
+                        grid[nr][nc] = 2;
+                        queue.offer(new int[] {nr, nc});
+                        fresh--;
+                        rotted = true;
+                    }
+                }
+            }
+
+            if (rotted) minutes++;
+        }
+
+        return (fresh == 0) ? minutes : -1;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        //System.out.println("Enter grid in format [[2,1,1],[0,1,1],[1,0,1]]:");
+        String input = sc.nextLine().trim();
+
+        // Remove outer brackets and split into rows
+        input = input.substring(1, input.length() - 1);
+        String[] rows = input.split("],\\[");
+
+        int[][] grid = new int[rows.length][];
+        for (int i = 0; i < rows.length; i++) {
+            String row = rows[i].replace("[", "").replace("]", "");
+            String[] nums = row.split(",");
+            grid[i] = new int[nums.length];
+            for (int j = 0; j < nums.length; j++) {
+                grid[i][j] = Integer.parseInt(nums[j].trim());
+            }
+        }
+
+        prog sol = new prog();
+        int result = sol.orangesRotting(grid);
+       // System.out.println("Minutes to rot all oranges: " + result);
+       System.out.println(result);
+    }
+
+    static class Pair<K, V> {
+        private K key;
+        private V value;
+
+        public Pair(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public K getKey() { return key; }
+        public V getValue() { return value; }
+    }
+}
+##
+hard20
+##
+import java.util.Arrays;
+import java.util.Scanner;
+import java.util.*;
+
+public class Solution {
+
+    public int racecar(int target) {
+        Queue<long[]> que = new LinkedList<>(); //int[] -> {pos,speed}
+        // Set<String> set = new HashSet<>();
+        que.add(new long[] { 0, 1 });
+        int steps = 0;
+        while (!que.isEmpty()) {
+            int size = que.size();
+            for (int i = 0; i < size; i++) {
+                long[] curr = que.poll();
+                if ((int) curr[0] == target)
+                    return steps;
+                long[] acc = new long[] { curr[0] + curr[1], curr[1] * 2 };
+                long[] rev = new long[] { curr[0], curr[1] > 0 ? -1 : 1 };
+                if (curr[0] + curr[1] < 2*target)
+                    que.add(acc);
+                if ((curr[1]>0 && curr[0]+curr[1]>target) ||(curr[1]<0 && curr[0] +curr[1] <target))
+                    que.add(rev);
+            }
+            steps++;
+        }
+        return -1;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int target = sc.nextInt();
+        Solution sol = new Solution();
+        System.out.println(sol.racecar(target));
+    }
+}
+##
+easy19
+import java.util.*;
+
+class Solution
+{
+    public int[][] floodFill(int[][] image, int sr, int sc, int color) {
+
+        // fill(image,sr,sc,color,image[sr][sc]);
+        if (image[sr][sc] != color) {
+        fill(image, sr, sc, color, image[sr][sc]);
+    }
+        return image;
+    }
+
+
+    public void fill(int[][] image, int i, int j, int color, int prev){
+        // Base case for checking i & j are within the matrix Bounds
+        if(i<0 ||j<0 || i>image.length-1 || j>image[0].length-1){
+            return;
+        }
+        // Skiping if the pixels val is diff from intial val or original val
+        if(image[i][j]!=prev)return;
+         // Changing if the pixels val is same to inital one
+        image[i][j] = color;
+        // Treversing the whole matrix (Image[][])
+        fill(image,i-1,j,color,prev); //Vertically Top pixel
+        fill(image,i+1,j,color,prev); //Vertically Down pixel
+        fill(image,i,j-1,color,prev); //Horizontally Left pixel
+        fill(image,i,j+1,color,prev); //horizontally  Right pixel
+    }
+
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine(); // Read matrix line like [[1,1,1],[1,1,0],[1,0,1]]
+        input = input.trim().replaceAll("^\\[\\[|\\]\\]$", ""); // Remove outer brackets
+
+        String[] rowStrings = input.split("\\],\\["); // Split rows
+
+        int m = rowStrings.length;
+        int n = rowStrings[0].split(",").length;
+        int[][] image = new int[m][n];
+
+        for (int i = 0; i < m; i++) {
+            String[] nums = rowStrings[i].split(",");
+            for (int j = 0; j < n; j++) {
+                image[i][j] = Integer.parseInt(nums[j].trim());
+            }
+        }
+
+        int sr = scanner.nextInt();
+        int sc = scanner.nextInt();
+        int newColor = scanner.nextInt();
+
+        Solution solution = new Solution();
+        int[][] result = solution.floodFill(image, sr, sc, newColor);
+
+        // Output in [[a,b],[c,d]] format
+        System.out.print("[");
+        for (int i = 0; i < result.length; i++) {
+            System.out.print("[");
+            for (int j = 0; j < result[i].length; j++) {
+                System.out.print(result[i][j]);
+                if (j != result[i].length - 1) System.out.print(",");
+            }
+            System.out.print("]");
+            if (i != result.length - 1) System.out.print(",");
+        }
+        System.out.println("]");
+    }
+}
+##
+
+hard19
+
+import java.util.*;
+
+public class Solution {
+
+    
+    public int calculateMinimumHP(int[][] dungeon) {
+        int row  = dungeon.length;
+        int col=dungeon[0].length;
+        int dp[][]=new int[row+1][col+1];
+        for(int num[]:dp){
+            Arrays.fill(num,Integer.MAX_VALUE);
+        }
+        dp[row-1][col]=1;
+        dp[row][col-1]=1;
+        for(int i=row-1;i>=0;i--){
+            for(int j=col-1;j>=0;j--){
+                int value = Math.min(dp[i][j+1],dp[i+1][j]) - dungeon[i][j];
+                dp[i][j]=Math.max(1,value);
+            }
+        }
+        return dp[0][0];
+    }
+
+    // Helper: Parse 2D array input like LeetCode's [[1,2],[3,4]]
+    public static int[][] parse2DArray(String input) {
+        input = input.trim();
+        if (input.equals("[]")) return new int[0][0];
+
+        input = input.substring(1, input.length() - 1); // remove outer brackets
+        List<int[]> rows = new ArrayList<>();
+        String[] rowStrings = input.split("],\\s*\\[");
+
+        for (String row : rowStrings) {
+            row = row.replace("[", "").replace("]", "");
+            String[] nums = row.split(",");
+            int[] rowArr = new int[nums.length];
+            for (int i = 0; i < nums.length; i++) {
+                rowArr[i] = Integer.parseInt(nums[i].trim());
+            }
+            rows.add(rowArr);
+        }
+
+        return rows.toArray(new int[0][0]);
+    }
+
+    // Main method to test input/output manually
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        //System.out.println("Enter dungeon grid (e.g., [[-2,-3,3],[-5,-10,1],[10,30,-5]]):");
+        String input = scanner.nextLine();
+        int[][] dungeon = parse2DArray(input);
+
+        Solution sol = new Solution();
+        int minHealth = sol.calculateMinimumHP(dungeon);
+        System.out.println(minHealth);
+    }
+}
+
+
+
+
+
+##
+
 mid19
 import java.util.*;
 
@@ -2712,6 +3016,7 @@ summa
 
 venna
 ##
+
 
 
 
